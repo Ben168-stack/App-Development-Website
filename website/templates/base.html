@@ -22,6 +22,10 @@
     <link href="../css/sb-admin-2.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/sb-admin-2.min.css') }}">
 
+    <!-- Custom styles for tables page -->
+    <link href="vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='../static/vendor/datatables/dataTables.bootstrap4.min.css') }}">
+
 </head>
 
 <body id="page-top">
@@ -33,19 +37,30 @@
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
             <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{ url_for('home_page') }}">
+            {% if current_user.is_authenticated %}
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{ url_for('dashboard_page') }}">
                 <div class="sidebar-brand-icon rotate-n-15">
-                    <i class="fas fa-laugh-wink"></i>
+                    <i class="fas fa-link fa-4x fa-color"></i>
+                    <!--chain icon-->
                 </div>
                 <div class="sidebar-brand-text mx-3">The Notable Chain Market</div>
             </a>
+            {% else %}
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{ url_for('login_page') }}">
+                <div class="sidebar-brand-icon rotate-n-15">
+                    <i class="fas fa-link fa-4x fa-color"></i>
+                    <!--chain icon-->
+                </div>
+                <div class="sidebar-brand-text mx-3">The Notable Chain Market</div>
+            </a>
+            {% endif %}
 
             <!-- Divider -->
             <hr class="sidebar-divider my-0">
 
             <!-- Nav Item - Dashboard -->
             <li class="nav-item">
-                <a class="nav-link" href="index.html">
+                <a class="nav-link" href="{{ url_for('dashboard_page') }}">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Dashboard</span></a>
             </li>
@@ -111,28 +126,32 @@
                 <div id="collapsePages" class="collapse show" aria-labelledby="headingPages"
                     data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
+                        {% if current_user.is_authenticated %}
+                            <div class="collapse-divider"></div>
+                            <h6 class="collapse-header">Other Pages:</h6>
+                            <a class="collapse-item" href="{{ url_for('about_us_page') }}">About Us Page</a>
+                        {% else %}
                         <h6 class="collapse-header">Login Screens:</h6>
+                        <a class="collapse-item active" href="{{ url_for('home_page') }}">Home Page</a>
                         <a class="collapse-item" href="{{ url_for('login_page') }}">Login</a>
                         <a class="collapse-item" href="{{ url_for('register_page') }}">Register</a>
                         <a class="collapse-item" href="{{ url_for('forgot_password_page') }}">Forgot Password</a>
-                        <div class="collapse-divider"></div>
-                        <h6 class="collapse-header">Other Pages:</h6>
-                        <a class="collapse-item" href="{{ url_for('about_us_page') }}">About Us Page</a>
-                        <a class="collapse-item active" href="{{ url_for('home_page') }}">Home Page</a>
+                        {% endif %}
+                        <!--Built in function from flask_login allows me to grab users whether they are logged in or annoynmous-->
                     </div>
                 </div>
             </li>
 
             <!-- Nav Item - Charts -->
             <li class="nav-item">
-                <a class="nav-link" href="charts.html">
+                <a class="nav-link" href="{{ url_for('charts_page') }}">
                     <i class="fas fa-fw fa-chart-area"></i>
                     <span>Charts</span></a>
             </li>
 
             <!-- Nav Item - Tables -->
             <li class="nav-item">
-                <a class="nav-link" href="tables.html">
+                <a class="nav-link" href="{{ url_for('table_page') }}">
                     <i class="fas fa-fw fa-table"></i>
                     <span>Tables</span></a>
             </li>
@@ -319,14 +338,23 @@
                                 <a class="dropdown-item text-center small text-gray-500" href="#">Read More Messages</a>
                             </div>
                         </li>
-
+                        {% if current_user.is_authenticated %}
+                        <li class="nav-item">
+                        <a class="nav-link" style="color:#514100">
+                        <i class="fas fa-coins"></i>
+                        <!-- Gives the coin design for budget  -->
+                        {{ current_user.prettier_budget}}
+                        </a>
+                        </li>
                         <div class="topbar-divider d-none d-sm-block"></div>
 
                         <!-- Nav Item - User Information -->
+
+
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Douglas McGee</span>
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{ current_user.username }}</span>
                                 <img class="img-profile rounded-circle"
                                     src="../static/img/undraw_profile.svg">
                             </a>
@@ -346,13 +374,15 @@
                                     Activity Log
                                 </a>
                                 <div class="dropdown-divider"></div>
+
                                 <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Logout
                                 </a>
+
                             </div>
                         </li>
-
+                        {% endif %}
                     </ul>
 
                 </nav>
@@ -360,7 +390,23 @@
 
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                    <!--    with_categories = true means it grabs the categories as well for messages-->
+                    {% if messages %}
+                        {% for category, message in messages %}
+                                <div class="alert alert-{{ category }}">
+                                    <button type="button" class="m1-2 mb-1 close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                    {% autoescape false %}
+                                    {{ message }}
+                                    {% endautoescape %}
+                                </div>
 
+                        {% endfor %}
+                    {% endif %}
+
+                    {% endwith %}
                     <!-- Page Heading -->
                     {% block content %}
 
@@ -376,7 +422,7 @@
             <footer class="sticky-footer bg-white">
                 <div class="container my-auto">
                     <div class="copyright text-center my-auto">
-                        <span>Copyright &copy; Your Website 2020</span>
+                        <span>Copyright &copy; Notable Chain Markets Incorporated 2021</span>
                     </div>
                 </div>
             </footer>
@@ -407,7 +453,7 @@
                 <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-primary" href="login.html">Logout</a>
+                    <a class="btn btn-primary" href="{{ url_for('logout_page') }}">Logout</a>
                 </div>
             </div>
         </div>
@@ -426,6 +472,30 @@
     <!-- Custom scripts for all pages-->
     <script src="../js/sb-admin-2.min.js"></script>
     <script src="{{ url_for('static', filename='js/sb-admin-2.min.js') }}"></script>
+
+        <!-- Page level plugins -->
+    <script src="../static/vendor/chart.js/Chart.min.js"></script>
+    <script src="{{ url_for('static', filename='vendor/chart.js/Chart.min.js') }}"></script>
+
+
+
+    <!-- Charts Page level custom scripts -->
+    <script src="../static/js/demo/chart-area-demo.js"></script>
+    <script src="../static/js/demo/chart-pie-demo.js"></script>
+    <script src="../static/js/demo/chart-bar-demo.js"></script>
+    <script src="{{ url_for('static', filename='../static/js/demo/chart-pie-demo.js') }}"></script>
+    <script src="{{ url_for('static', filename='../static/js/demo/chart-bar-demo.js') }}"></script>
+    <script src="{{ url_for('static', filename='../static/js/demo/chart-area-demo.js') }}"></script>
+
+    <!--Tables Page level plugins -->
+    <script src="vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="vendor/datatables/dataTables.bootstrap4.min.js"></script>
+    <script src="{{ url_for('static', filename='../static/vendor/datatables/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='../static/vendor/datatables/dataTables.bootstrap4.min.js') }}"></script>
+
+    <!-- Tables Page level custom scripts -->
+    <script src="js/demo/datatables-demo.js"></script>
+<script src="{{ url_for('static', filename='../static/js/demo/datatables-demo.js') }}"></script>
 </body>
 
 </html>
