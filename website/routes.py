@@ -10,8 +10,6 @@ from flask_login import login_user,logout_user, login_required
 def home_page():
     return render_template('home.html')
 
-
-
 @app.route('/about_us', methods=['GET', 'POST'])
 @login_required
 def about_us_page():
@@ -33,6 +31,7 @@ def table_page():
     return render_template('tables.html')
 @app.route('/login', methods = ['GET','POST'])
 def login_page():
+    db.create_all()
     # warning very funny error when logging in if passwords are not hashed(check SQlite) it will crash
     # giving an error of Invalid salt Value error
     form = LoginForm()
@@ -52,6 +51,7 @@ def login_page():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register_page():
+    db.create_all()
     form = RegisterForm()
     if form.validate_on_submit():
         user_to_create = User(username=form.username.data,
