@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}Partners{% endblock %}
+
+{% block content %}
+<h1 class="display-4">Partners</h1>
+<div>
+  {% if count == 0 %}
+  <p>There are no partners in the database.</p>
+  {% elif count == 1 %}
+  <p>There is 1 partner.</p>
+  {% else %}
+  <p>There are {{ count }} partners.</p>
+  {% endif %}
+</div>
+<div>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Partner ID</th>
+        <th>Company Name</th>
+        <th>Location</th>
+        <th>Email</th>
+        <th>Last Updated</th>
+        <th>Update</th>
+        <th>Delete</th>
+      </tr>
+    </thead>
+    <tbody>
+          {% for partner in partners %}
+      <tr>
+        <td>{{ partner.get_id() }}</td>
+        <td>{{ partner.get_name() }}</td>
+        <td>{{ partner.get_location() }}</td>
+        <td>{{ partner.get_email() }}</td>
+        <td>{{ partner.get_date_added() }}</td>
+
+
+        <td>
+            <form action="{{url_for('update_partner', id=partner.get_id() )}}" method="POST">
+            <input type="submit" value="Update" class="btn btn-warning">
+            </form>
+        </td>
+
+        <td>
+          <a href="" class="btn btn-danger" data-toggle="modal" data-target="#updateModal--{{partner.get_id()}}";>Delete</a>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% for partner in partners %}
+<!-- Update Partner Modal -->
+<div class="modal fade" id="updateModal--{{partner.get_id()}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Delete {{partner.get_name()}}?</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">Are you sure you want to delete {{partner.get_name()}}? This action cannot be undone.</div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <form action="{{url_for('delete_partner', id=partner.get_id() )}}" method="POST">
+                        <input type="submit" value="Delete" class="btn btn-danger">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endfor %}
+{% endblock %}
