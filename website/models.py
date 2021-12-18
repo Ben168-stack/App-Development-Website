@@ -5,11 +5,10 @@ from datetime import datetime
 import shelve
 from sqlalchemy import func
 
+# Benjamin
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
-
-
 # convert received user id into an integer
 
 class User(db.Model, UserMixin):
@@ -24,7 +23,8 @@ class User(db.Model, UserMixin):
     # thats why length is set to 60
     date = db.Column(db.String(), default=datetime.now().strftime("%d/%m/%Y"))
     budget = db.Column(db.Integer(), nullable=False, default=10000)
-    items = db.relationship('Item', backref='owned_user', lazy=True)
+    gender = db.Column(db.String(),nullable=False,default = 'rather not say')
+    # items = db.relationship('Item', backref='owned_user', lazy=True)
     # relationship is to make it so some items have some relationship to
     # the user.
 
@@ -59,18 +59,16 @@ class User(db.Model, UserMixin):
     def can_deposit(self,deposit_to_check):
         return deposit_to_check > 0
 
-
-
-class Item(db.Model):
-    id = db.Column(db.Integer(), primary_key=True)
-    name = db.Column(db.String(length=30), nullable=False, unique=True)
-    price = db.Column(db.Integer(), nullable=False)
-    barcode = db.Column(db.String(length=12), nullable=False, unique=True)
-    description = db.Column(db.String(length=1024), nullable=False, unique=True)
-    owner = db.Column(db.Integer(), db.ForeignKey('user.id'))
-
-    def __repr__(self):
-        return f'Item {self.name}'
+# class Item(db.Model):
+#     id = db.Column(db.Integer(), primary_key=True)
+#     name = db.Column(db.String(length=30), nullable=False, unique=True)
+#     price = db.Column(db.Integer(), nullable=False)
+#     barcode = db.Column(db.String(length=12), nullable=False, unique=True)
+#     description = db.Column(db.String(length=1024), nullable=False, unique=True)
+#     owner = db.Column(db.Integer(), db.ForeignKey('user.id'))
+#
+#     def __repr__(self):
+#         return f'Item {self.name}'
 
 class Partners:
     def __init__(self,name,location,email):
@@ -170,6 +168,38 @@ class Suppliers:
     def __str__(self):
         return f"ID: {self.get_id()} , Supplier Name: {self.get_name()}"
 
+# Samuel
+class Item:
+    def __init__(self,name):
+        self.__name = name
+        self.id = None
+
+    def get_name(self):
+        return self.__name
+
+    def set_name(self,name):
+        self.__name = name
+
+# Daniel
+class Booking(Message):
+    def __init__(self,id,description,title,time_added,time_updated):
+        super().__init__(id,description)
+        self.__title = title
+        self.__time_added = time_added
+        self.__time_updated = time_updated
+
+    def get_title(self):
+        return self.__title
+    def get_time_added(self):
+        return self.__time_added
+    def get_time_updated(self):
+        return self.__time_updated
+    def set_title(self,title):
+        self.__title = title
+    def set_time_added(self,time_added):
+        self.__time_added = time_added
+    def set_time_updated(self, time_updated):
+        self.__time_updated = time_updated
 
 
 

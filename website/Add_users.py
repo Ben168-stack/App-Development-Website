@@ -8,6 +8,6 @@ from website.models import User
 
 db.create_all()
 app = Flask(__name__)
-admin = User(admin=1,username='admin2', email_address='admin2@example.com',password='admin123')
+admin = User(admin=1,username='admin2', email_address='admin2@example.com',password='admin123',gender='rather not say')
 db.session.add(admin)
 db.session.commit()

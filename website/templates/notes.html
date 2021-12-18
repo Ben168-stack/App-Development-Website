@@ -8,7 +8,7 @@
             <div class="col-12 shadow p-3 mb-5 bg-info rounded d-inline-block w-100", style="color:white">
 
                 <form action="{{ url_for('deleteNotes') }}" class="" method="POST">
-                    <input type="hidden" name="uuid" value="{{ user_notes[i].get_id() }}">
+                    <input type="hidden" name="uuid" value="{{ user_notes[i].get_id()}}">
                     <button type="submit" class="close" data-dismiss="modal" aria-label="Close" style="color:white">
                 <span aria-hidden="true">&times;</span>
                 </button>
@@ -24,12 +24,12 @@
                     <button type="submit" class="btn btn-danger">Delete</button>
                 </form>
                 &nbsp;
-                <a class="open-AddBookDialog btn btn-warning" data-toggle="modal" data-target="#UpdateNoteModal">Update</a>
+                <button class="btn btn-warning" data-toggle="modal" data-target="#UpdateNoteModal--{{ user_notes[i].get_id() }}">Update</button>
             </div>
         </div>
         {% endfor %}
         <button type="button" class="btn btn-light shadow btn-lg btn-block" data-toggle="modal" data-target="#exampleModal" style="margin-left: 10px; height: 222px;padding-right: 150px;padding-left: 150px;">
-        <img src="../static/img/Professor.jpg" height="50%">
+        <img src="../static/img/sticky-note.png" height="50%">
         </button>
 
 
@@ -59,7 +59,6 @@
             </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-
           {{ form.submit(class='btn btn-primary btn-user ') }}
         </div>
     </form>
@@ -67,8 +66,10 @@
     </div>
   </div>
 
+
     <!-- Update Note Modal   -->
-  <div class="modal fade" id="UpdateNoteModal" tabindex="-1" role="dialog" aria-labelledby="UpdateNoteModalLabel" aria-hidden="true">
+  {% for i in user_notes %}
+  <div class="modal fade" id="UpdateNoteModal--{{ user_notes[i].get_id() }}" tabindex="-1" role="dialog" aria-labelledby="UpdateNoteModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
         <div class="modal-header">
@@ -77,33 +78,22 @@
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
-        <form method="POST">
+        <form action="{{url_for('updateNotes')}}" class="d-inline-block" method="POST">
         <div class="modal-body">
-                {{ update_form.title.label() }}
-                {{ update_form.title(class='form-control form-control-user', placeholder='Enter Title') }}
-                {{ update_form.description.label() }}
-                {{ update_form.description(class='form-control form-control-user', placeholder='Enter Description') }}
+                <input type="hidden" name="uuid" value="{{ user_notes[i].get_id() }}">
+                {{ form.title.label() }}
+                {{ form.title(class='form-control form-control-user', placeholder='Enter Title') }}
+                {{ form.description.label() }}
+                {{ form.description(class='form-control form-control-user', placeholder='Enter Description') }}
             </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          <form action="{{ url_for('updateNotes') }}" class="d-inline-block" method="POST">
-            {{ update_form.submit(class='btn btn-primary btn-user ') }}
-          </form>
-
+            <button type="submit" class="btn btn-primary">Update Note</button>
         </div>
     </form>
       </div>
     </div>
   </div>
-<script>
-    $(document).on("click", ".open-AddBookDialog", function () {
-     var myBookId = $(this).data('id');
-     $(".modal-body #bookId").val( myBookId );
-     // As pointed out in comments,
-     // it is unnecessary to have to manually call the modal.
-     // $('#addBookDialog').modal('show');
-});
-</script>
-
+{% endfor %}
 
 {% endblock %}

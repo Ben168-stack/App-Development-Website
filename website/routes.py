@@ -9,7 +9,13 @@ import shelve
 from datetime import datetime
 from uuid import uuid4 # Unique key generator
 
+# For Error Handling when user enters invalid url address
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('error404.html'), 404
 
+
+# Benjamin
 # the '/' route is default route
 @app.route('/')
 @app.route('/home')
@@ -22,21 +28,30 @@ def home_page():
 def profile_page():
     return render_template('profile.html')
 
+@app.route('/updateUser', methods=['GET', 'POST'])
+def update_User(id):
+    return render_template('UpdateUser.html')
 
-@app.route('/landing')
-def landing_page():
-    return render_template('landingPage.html')
-
-
-@app.errorhandler(404)
-def page_not_found(e):
-    return render_template('error404.html'), 404
-
-
-@app.route('/about_us', methods=['GET', 'POST'])
+@app.route('/partners')
 @login_required
-def about_us_page():
-    return render_template('aboutUs.html')
+def partners_page():
+    partners_dict = {}
+    try:
+        db_shelve = shelve.open('website/databases/partners/partner.db', 'r')
+        partners_dict = db_shelve['PartnerInfo']
+        db_shelve.close()
+    except IOError:
+        print("Error trying to read file")
+
+    except Exception as e:
+        print(f"An unknown error has occurred,{e}")
+
+    partners_list = []
+    for key in partners_dict:
+        partner = partners_dict.get(key)
+        partners_list.append(partner)
+
+    return render_template('Partner.html', count=len(partners_list), partners=partners_list)
 
 
 @app.route('/add_partners', methods=['GET', 'POST'])
@@ -87,27 +102,6 @@ def add_partners_page():
         return render_template('AddPartner.html', form=form)
 
 
-@app.route('/partners')
-@login_required
-def partners_page():
-    partners_dict = {}
-    try:
-        db_shelve = shelve.open('website/databases/partners/partner.db', 'r')
-        partners_dict = db_shelve['PartnerInfo']
-        db_shelve.close()
-    except IOError:
-        print("Error trying to read file")
-
-    except Exception as e:
-        print(f"An unknown error has occurred,{e}")
-
-    partners_list = []
-    for key in partners_dict:
-        partner = partners_dict.get(key)
-        partners_list.append(partner)
-
-    return render_template('Partner.html', count=len(partners_list), partners=partners_list)
-
 @app.route('/deletePartner/<int:id>', methods=['POST'])
 def delete_partner(id):
     partner_dict = {}
@@ -146,24 +140,6 @@ def update_partner(id):
 
         return render_template('updatePartner.html', form=form)
 
-@app.route('/dashboard')
-@login_required
-def dashboard_page():
-    return render_template('dashboard.html')
-
-
-@app.route('/charts')
-@login_required
-def charts_page():
-    return render_template('charts.html')
-
-
-@app.route('/markets')
-@login_required
-def market_page():
-    return render_template('market.html')
-
-
 @app.route('/transfer_funds')
 @login_required
 def transfer_funds_page():
@@ -189,6 +165,22 @@ def transfer_funds_user_page(id):
     if request.method == 'GET':
         return render_template('transferUserFunds.html', form=form, username=username)
 
+@app.route('/deposit', methods=['GET', 'POST'])
+@login_required
+def deposit():
+    db.create_all()
+    form = DepositForm()
+    if request.method == 'POST':
+        if form.validate_on_submit() and current_user.can_deposit(form.budget.data):
+            userID = User.query.filter_by(id=current_user.id).first()
+            userID.budget += form.budget.data
+            db.session.commit()
+            flash("Amount added successfully", category='success')
+        else:
+            flash("Cannot deposit an amount less or equal to 0!", category='danger')
+        return redirect(url_for('deposit'))
+    if request.method == 'GET':
+        return render_template('Deposit.html', form=form)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login_page():
@@ -236,35 +228,6 @@ def register_page():
 
     return render_template('register.html', form=form)
 
-
-@app.route('/deposit', methods=['GET', 'POST'])
-@login_required
-def deposit():
-    db.create_all()
-    form = DepositForm()
-    if request.method == 'POST':
-        if form.validate_on_submit() and current_user.can_deposit(form.budget.data):
-            userID = User.query.filter_by(id=current_user.id).first()
-            userID.budget += form.budget.data
-            db.session.commit()
-            flash("Amount added successfully", category='success')
-        else:
-            flash("Cannot deposit an amount less or equal to 0!", category='danger')
-        return redirect(url_for('deposit'))
-    if request.method == 'GET':
-        return render_template('Deposit.html', form=form)
-
-
-@app.route('/forgot_password')
-def forgot_password_page():
-    return render_template('forgot_password.html')
-
-
-@app.route('/updateUser', methods=['GET', 'POST'])
-def update_User(id):
-    return render_template('UpdateUser.html')
-
-
 @app.route('/logout')
 def logout_page():
     logout_user()
@@ -278,9 +241,9 @@ def logout_page():
 @app.route("/notes", methods=["GET", "POST"])
 def notes():
     add_notes_form = Add_Notes()
-    update_notes_form = Update_Notes()
     notes_database = shelve.open('website/databases/Notes/note.db', 'c')
     user_notes = {}
+
     try:
         if str(current_user.id) not in notes_database:
             notes_database[str(current_user.id)] = user_notes
@@ -301,8 +264,11 @@ def notes():
             notes_database[str(current_user.id)] = user_notes
             notes_database.close()
             flash("New Note Added", category='success')
+            print(user_notes)
+            for i in user_notes:
+                print(f"{user_notes[i].get_id()}")
             return redirect(url_for("notes"))
-    return render_template("notes.html", form = add_notes_form, update_form=update_notes_form ,user_notes = user_notes)
+    return render_template("notes.html", form = add_notes_form, user_notes = user_notes)
 
 @app.route("/deleteNotes", methods=["GET", "POST"])
 def deleteNotes():
@@ -326,30 +292,60 @@ def deleteNotes():
 
 @app.route('/updateNotes', methods=["GET", "POST"])
 def updateNotes():
-    update_notes_form = Update_Notes()
-    notes_database = shelve.open('website/databases/Notes/note.db', 'w')
-    user_notes = {}
-    try:
-        if str(current_user.id) not in notes_database:
-            notes_database[str(current_user.id)] = user_notes
+    if request.method == 'POST':
+        update_notes_form = Update_Notes()
+        notes_database = shelve.open('website/databases/Notes/note.db', 'w')
+        user_notes = {}
+        try:
+            if str(current_user.id) not in notes_database:
+                notes_database[str(current_user.id)] = user_notes
+            else:
+                user_notes = notes_database[str(current_user.id)]
+        except KeyError:
+            flash("No such note.", category="danger")
+        except Exception as e:
+            flash(f"An Unknown Error has occurred, {e}", category="danger")
         else:
-            user_notes = notes_database[str(current_user.id)]
-    except KeyError:
-        flash("No such note.", category="error")
-    except Exception as e:
-        flash(f"An Unknown Error has occurred, {e}")
-    else:
-        if request.method == 'POST':
             current_note = user_notes[str(request.form.get('uuid'))]
-            current_note.set_title(update_notes_form.title.data)
-            current_note.set_description(update_notes_form.description.data)
+            current_note.set_title(request.form.get('title'))
+            current_note.set_description(request.form.get('description'))
             current_note.set_time_updated(datetime.now().strftime("%d/%m/%y %I:%M:%S:%p"))
+            notes_database[str(current_user.id)] = user_notes
             notes_database.close()
-            flas
-            return redirect(url_for("notes"))
-        if request.method == 'GET':
-            return redirect(url_for("updateNotes"))
+        return redirect(url_for("notes"))
 
+# Ming Wei
+@app.route('/landing')
+def landing_page():
+    return render_template('landingPage.html')
+
+@app.route('/about_us', methods=['GET', 'POST'])
+@login_required
+def about_us_page():
+    return render_template('aboutUs.html')
+
+@app.route('/dashboard')
+@login_required
+def dashboard_page():
+    return render_template('dashboard.html')
+
+@app.route('/charts')
+@login_required
+def charts_page():
+    return render_template('charts.html')
+
+@app.route('/forgot_password')
+def forgot_password_page():
+    return render_template('forgot_password.html')
+
+# Samuel
+@app.route('/markets')
+@login_required
+def market_page():
+    return render_template('market.html')
+
+
+# Daniel
 
 
 

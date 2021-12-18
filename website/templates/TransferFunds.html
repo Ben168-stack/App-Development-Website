@@ -20,19 +20,15 @@
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                     <thead>
                         <tr>
+                            <th>User ID</th>
                             <th>Username</th>
-                            <th>Email</th>
-                            <th>Balance</th>
-                            <th>Date Joined</th>
                             <th>Action</th>
                         </tr>
                     </thead>
                     <tfoot>
                         <tr>
+                            <th>User ID</th>
                             <th>Username</th>
-                            <th>Email</th>
-                            <th>Balance</th>
-                            <th>Date Joined</th>
                             <th>Action</th>
                         </tr>
                     </tfoot>
@@ -41,10 +37,8 @@
                     {% for user in users %}
                     {% if user.id != current_user.id%}
                         <tr>
+                            <td>{{user.id}}</td>
                             <td>{{user.username}}</td>
-                            <td>{{user.email_address}}</td>
-                            <td>${{user.budget}}</td>
-                            <td>{{user.date}}</td>
                             <td>
                             <button class="btn btn-outline btn-info" data-toggle="modal" data-target="#Modal-MoreInfo--{{user.id}}">Transfer Funds</button>
                             <!--data-target go check the id tag in 'items_modals.html'
@@ -79,10 +73,9 @@
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                              <form action="{{url_for('transfer_funds_user_page', id=user.id )}}" method="POST">
-                                <input type="submit" value="Transfer" class="btn btn-primary">
-                                </form>
-
+                      <form action="{{url_for('transfer_funds_user_page', id=user.id )}}" method="POST">
+                        <input type="submit" value="Transfer" class="btn btn-primary">
+                      </form>
                 </div>
             </div>
         </div>

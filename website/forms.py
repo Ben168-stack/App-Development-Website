@@ -56,59 +56,23 @@ class TransferFunds(FlaskForm):
 
 
 class CreatePartnerForm(FlaskForm):
-    def validate_name(self,name_to_check):
-        partners_dict = {}
-        try:
-            db_shelve = shelve.open('partner.db', 'r')
-            partners_dict = db_shelve['PartnerInfo']
-            db_shelve.close()
-        except IOError:
-            print("Error trying to read file")
-
-        except Exception as e:
-            print(f"An unknown error has occurred,{e}")
-
-
-        for key in partners_dict:
-            partner = partners_dict[key]
-            if name_to_check.date[key].get_name() == partner.get_name():
-                raise ValidationError("Name already exist!, Please enter a different name.")
-
     name = StringField(label='Name', validators=[Length(min=1, max=150), DataRequired()])
     location = StringField(label='Location', validators=[Length(min=1, max=150), DataRequired()])
-    email = StringField(label='Email Address:', validators=[Email(), DataRequired()])
+    email = EmailField(label='Email Address:', validators=[Email(), DataRequired()])
     submit = SubmitField(label='Add Partner')
 
 class UpdatePartnerForm(FlaskForm):
-    def validate_name(self,name_to_check):
-        partners_dict = {}
-        try:
-            db_shelve = shelve.open('partner.db', 'r')
-            partners_dict = db_shelve['PartnerInfo']
-            db_shelve.close()
-        except IOError:
-            print("Error trying to read file")
-
-        except Exception as e:
-            print(f"An unknown error has occurred,{e}")
-
-
-        for key in partners_dict:
-            partner = partners_dict[key]
-            if name_to_check.date[key].get_name() == partner.get_name():
-                raise ValidationError("Name already exist!, Please enter a different name.")
-
     name = StringField(label='Name', validators=[Length(min=1, max=150), DataRequired()])
     location = StringField(label='Location', validators=[Length(min=1, max=150), DataRequired()])
-    email = StringField(label='Email Address:', validators=[Email(), DataRequired()])
+    email = EmailField(label='Email Address:', validators=[Email(), DataRequired()])
     submit = SubmitField(label='Confirm Changes')
 
 class Add_Notes(FlaskForm):
-    description = StringField(label='Description', validators=[Length(min=1, max=150), DataRequired()])
+    description = TextAreaField(label='Description', validators=[Length(min=1, max=150), DataRequired()])
     title = StringField(label='Title', validators=[Length(min=1, max=30), DataRequired()])
     submit = SubmitField(label='Add Notes')
 
 class Update_Notes(FlaskForm):
-    description = StringField(label='Description', validators=[Length(min=1, max=150), DataRequired()])
+    description = TextAreaField(label='Description', validators=[Length(min=1, max=150), DataRequired()])
     title = StringField(label='Title', validators=[Length(min=1, max=30), DataRequired()])
     submit = SubmitField(label='Update Notes')
