@@ -23,12 +23,18 @@
     <link href="../static/css/sb-admin-2.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='../static/css/sb-admin-2.min.css') }}">
 
+
     <!-- Custom styles for tables page -->
     <link href="vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='../static/vendor/datatables/dataTables.bootstrap4.min.css') }}">
 
     <!-- Bootstrap 4   -->
     <link href="../css/bootstrap.css" rel="stylesheet" type="text/css"/>
+<!--    <link rel="stylesheet" href="{{ url_for('static', filename='../static/css/bootstrap-alibaba.css') }}">-->
+<!--    <link rel="stylesheet" href="{{ url_for('static', filename='../static/css/bootstrap-rtl-alibaba') }}">-->
+<!--    <link rel="stylesheet" href="{{ url_for('static', filename='../static/css/responsive-alibaba') }}">-->
+<!--    <link rel="stylesheet" href="{{ url_for('static', filename='../static/css/ui') }}">-->
+
 <!--    <link rel="stylesheet" href="{{ url_for('static', filename='../static/css/bootstrap.css') }}">-->
 <!--    <link rel="stylesheet" href="{{ url_for('static', filename='../static/css/responsive.css') }}">-->
 
@@ -50,7 +56,14 @@
 <!--    <link rel="stylesheet" href="{{ url_for('static', filename='//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css') }}">-->
 <!--    <script src="{{ url_for('static', filename='//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js') }}"></script>-->
 <!--    <script src="{{ url_for('static', filename='//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js') }}"></script>-->
-
+<script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
+<df-messenger
+  chat-icon="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Ben168-stack&#x2F;App-Development-Website&#x2F;main&#x2F;img&#x2F;Hakase.png"
+  intent="WELCOME"
+  chat-title="Chatty"
+  agent-id="221170f4-72db-467a-a988-8de654e227fe"
+  language-code="en"
+></df-messenger>
 
 
 </head>
@@ -108,12 +121,11 @@
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Custom Components:</h6>
                         <a class="collapse-item" href="buttons.html">Booking</a>
-                        <a class="collapse-item" href="cards.html">Ticket</a>
+                        <a class="collapse-item" href="{{ url_for('ticket_page') }}">Ticket</a>
                         <a class="collapse-item" href="cards.html">Feedback</a>
                     </div>
                 </div>
             </li>
-
             <!-- Nav Item - Utilities Collapse Menu -->
             {% if current_user.admin == 1 %}
             <li class="nav-item">
@@ -126,12 +138,13 @@
                     data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Custom Utilities:</h6>
-                        <a class="collapse-item" href="">Suppliers</a>
-                        <a class="collapse-item" href="">Add Suppliers</a>
+                        <a class="collapse-item" href="{{ url_for('supplier_page') }}">Suppliers</a>
+                        <a class="collapse-item" href="{{ url_for('create_supplier') }}">Add Suppliers</a>
                         <a class="collapse-item" href="{{ url_for('partners_page') }}">Partners</a>
                         <a class="collapse-item" href="{{ url_for('add_partners_page') }}">Add Partners</a>
                         <a class="collapse-item" href="">Registered Users</a>
-                        <a class="collapse-item" href="">Ticket Requests</a>
+                        <a class="collapse-item" href="{{ url_for('ticket_requests_page') }}">Ticket Requests</a>
+                        <a class="collapse-item" href="{{ url_for('Add_Item') }}">Add Item</a>
                         <a class="collapse-item" href="">Other</a>
                     </div>
                 </div>
@@ -165,6 +178,7 @@
                         {% else %}
                         <h6 class="collapse-header">Login Screens:</h6>
                         <a class="collapse-item active" href="{{ url_for('home_page') }}">Home Page</a>
+                        <a class="collapse-item" href="{{ url_for('about_us_page') }}">About Us Page</a>
                         <a class="collapse-item" href="{{ url_for('login_page') }}">Login</a>
                         <a class="collapse-item" href="{{ url_for('register_page') }}">Register</a>
                         <a class="collapse-item" href="{{ url_for('forgot_password_page') }}">Forgot Password</a>
@@ -173,6 +187,7 @@
                     </div>
                 </div>
             </li>
+
 
             <!-- Nav Item - Charts -->
             <li class="nav-item">
@@ -266,19 +281,21 @@
                             </div>
                         </li>
 
-
-
-
-
-
                         {% if current_user.is_authenticated %}
+                        <li class="nav-item">
+                        <a class="nav-link" style="color:#514100">
+                        <i class="fas fa-coins"></i>
+                        <!-- Gives the coin design for budget  -->
+                        {{ current_user.prettier_budget}}
+                        </a>
+                        </li>
                         <!-- Nav Item - Messages -->
                         <li class="nav-item dropdown no-arrow mx-1">
                             <a class="nav-link dropdown-toggle" href="#" id="messagesDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <i class="fas fa-envelope fa-fw"></i>
                                 <!-- Counter - Messages -->
-                                <span class="badge badge-danger badge-counter">7</span>
+                                <span class="badge badge-danger badge-counter">{{current_user.messages}}</span>
                             </a>
                             <!-- Dropdown - Messages -->
                             <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
@@ -334,7 +351,7 @@
                                         <div class="small text-gray-500">Chicken the Dog · 2w</div>
                                     </div>
                                 </a>
-                                <a class="dropdown-item text-center small text-gray-500" href="#">Read More Messages</a>
+                                <a class="dropdown-item text-center small text-gray-500" href="{{ url_for('messages_page') }}">Read More Messages</a>
                             </div>
                         </li>
                         <!-- Nav Item - Shopping cart -->
@@ -387,13 +404,7 @@
                                 <a class="dropdown-item text-center small text-gray-500" href="#">Show All Items</a>
                             </div>
                         </li>
-                        <li class="nav-item">
-                        <a class="nav-link" style="color:#514100">
-                        <i class="fas fa-coins"></i>
-                        <!-- Gives the coin design for budget  -->
-                        {{ current_user.prettier_budget}}
-                        </a>
-                        </li>
+
                         <div class="topbar-divider d-none d-sm-block"></div>
 
                         <!-- Nav Item - User Information -->
@@ -474,16 +485,172 @@
                 </div>
             </div>
             <!-- End of Main Content -->
+            <br>
+            <br>
+<!-- Footer -->
+<footer class="page-footer font-small unique-color-dark">
 
-            <!-- Footer -->
-            <footer class="sticky-footer bg-white">
-                <div class="container my-auto">
-                    <div class="copyright text-center my-auto">
-                        <span>Copyright &copy; Notable Chain Markets Incorporated 2021</span>
-                    </div>
-                </div>
-            </footer>
-            <!-- End of Footer -->
+  <div style="background-color: #4e73df; color:white">
+    <div class="container">
+
+      <!-- Grid row-->
+      <div class="row py-4 d-flex align-items-center">
+
+        <!-- Grid column -->
+        <div class="col-md-6 col-lg-5 text-center text-md-left mb-4 mb-md-0">
+          <h6 class="mb-0">Get connected with us on social networks!</h6>
+        </div>
+        <!-- Grid column -->
+
+        <!-- Grid column -->
+        <div class="col-md-6 col-lg-7 text-center text-md-right">
+
+          <!-- Facebook -->
+          <a class="fb-ic" style="color:white;">
+            <i class="fab fa-facebook-f white-text mr-4"> </i>
+          </a>
+          <!-- Twitter -->
+          <a class="tw-ic" style="color:white;">
+            <i class="fab fa-twitter white-text mr-4"> </i>
+          </a>
+          <!-- Google +-->
+          <a class="gplus-ic" style="color:white;">
+            <i class="fab fa-google-plus-g white-text mr-4"> </i>
+          </a>
+          <!--Linkedin -->
+          <a class="li-ic" style="color:white;">
+            <i class="fab fa-linkedin-in white-text mr-4"> </i>
+          </a>
+          <!--Instagram-->
+          <a class="ins-ic" style="color:white;">
+            <i class="fab fa-instagram white-text"> </i>
+          </a>
+
+        </div>
+        <!-- Grid column -->
+
+      </div>
+      <!-- Grid row-->
+
+    </div>
+  </div>
+
+  <!-- Footer Links -->
+  <div class="container text-center text-md-left mt-5">
+
+    <!-- Grid row -->
+    <div class="row mt-3">
+
+      <!-- Grid column -->
+      <div class="col-md-3 col-lg-4 col-xl-3 mx-auto mb-4">
+
+        <!-- Content -->
+        <h6 class="text-uppercase font-weight-bold">Swiss's Promise</h6>
+        <hr class="deep-purple accent-2 mb-4 mt-0 d-inline-block mx-auto" style="width: 60px;">
+        <p>Swiss puts its Staff and Customer relations first and ensuring reliable banking services while helping our customers find the best deals while shopping on our platform.</p>
+
+      </div>
+      <!-- Grid column -->
+
+      <!-- Grid column -->
+      <div class="col-md-2 col-lg-2 col-xl-2 mx-auto mb-4">
+
+        <!-- Links -->
+
+        <h6 class="text-uppercase font-weight-bold">Company</h6>
+        <hr class="deep-purple accent-2 mb-4 mt-0 d-inline-block mx-auto" style="width: 60px;">
+      {% if current_user.is_authenticated %}
+        <p>
+          <a href="{{ url_for('home_page') }}">Home</a>
+        </p>
+        <p>
+          <a href="{{ url_for('about_us_page') }}">About Us</a>
+        </p>
+      {% else %}
+        <p>
+          <a href="{{ url_for('home_page') }}">Home</a>
+        </p>
+        <p>
+          <a href="{{ url_for('about_us_page') }}">About Us</a>
+        </p>
+        <p>
+          <a href="{{ url_for('login_page') }}">Login</a>
+        </p>
+        <p>
+          <a href="{{ url_for('register_page') }}">Register</a>
+        </p>
+
+      {% endif %}
+      </div>
+      <!-- Grid column -->
+
+
+
+      <!-- Grid column -->
+      <div class="col-md-3 col-lg-2 col-xl-2 mx-auto mb-4">
+
+        <!-- Links -->
+
+        <h6 class="text-uppercase font-weight-bold">Useful links</h6>
+        <hr class="deep-purple accent-2 mb-4 mt-0 d-inline-block mx-auto" style="width: 60px;">
+        <p>
+          <a href="{{ url_for('profile_page') }}">Your Account</a>
+        </p>
+        <p>
+          <a href="{{ url_for('market_page') }}">Shopping</a>
+        </p>
+        <p>
+          <a href="{{ url_for('deposit') }}">Make a Deposit</a>
+        </p>
+        <p>
+          <a href="{{ url_for('transfer_funds_page') }}">Transfer Funds</a>
+        </p>
+        <p>
+          <a href="{{ url_for('ticket_page') }}">Report an Issue</a>
+        </p>
+        <p>
+          <a href="#!">Make an Appointment</a>
+        </p>
+        <p>
+          <a href="#!">Help</a>
+        </p>
+
+      </div>
+      <!-- Grid column -->
+
+      <!-- Grid column -->
+      <div class="col-md-4 col-lg-3 col-xl-3 mx-auto mb-md-0 mb-4">
+
+        <!-- Links -->
+        <h6 class="text-uppercase font-weight-bold">Contact</h6>
+        <hr class="deep-purple accent-2 mb-4 mt-0 d-inline-block mx-auto" style="width: 60px;">
+        <p>
+          <i class="fas fa-home mr-3"></i> 511 Canberra Road, #02-03, Sembawang Mart, Singapore 750511</p>
+        <p>
+          <i class="fas fa-envelope mr-3"></i> Swiss@gmail.com</p>
+        <p>
+          <i class="fas fa-phone mr-3"></i> + 65 234 567 88</p>
+        <p>
+          <i class="fas fa-print mr-3"></i> + 65 234 567 89</p>
+
+      </div>
+      <!-- Grid column -->
+
+    </div>
+    <!-- Grid row -->
+
+  </div>
+  <!-- Footer Links -->
+
+  <!-- Copyright -->
+  <div class="footer-copyright text-center py-3">© 2020 Copyright:
+    <a href="#"> Swiss</a>
+  </div>
+  <!-- Copyright -->
+
+</footer>
+<!-- Footer -->
+<!-- End of Footer -->
 
         </div>
         <!-- End of Content Wrapper -->
@@ -492,7 +659,7 @@
     <!-- End of Page Wrapper -->
 
     <!-- Scroll to Top Button-->
-    <a class="scroll-to-top rounded" href="#page-top">
+    <a class="scroll-to-top rounded" href="#page-top" style="margin-bottom:70px; margin-right:10px;">
         <i class="fas fa-angle-up"></i>
     </a>
 
@@ -556,6 +723,7 @@
     <!-- Core plugin JavaScript-->
     <script src="../vendor/jquery-easing/jquery.easing.min.js"></script>
     <script src="{{ url_for('static', filename='vendor/jquery-easing/jquery.easing.min.js') }}"></script>
+
 
     <!-- Custom scripts for all pages-->
     <script src="../js/sb-admin-2.min.js"></script>
