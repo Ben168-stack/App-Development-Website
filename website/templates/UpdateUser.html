@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Register Page{% endblock %}
+{% block title %}Update User Page{% endblock %}
 <!-- Custom fonts for this template-->
 <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
 <link
@@ -11,76 +11,65 @@
 
 
 {% block content %}
-<body class="bg-gradient-primary">
+<div class="container-fluid" style="margin-top: 30px;">
+<div class="bg-gradient-secondary text-white shadow-lg " style="padding: 35px;">
+  <h1 class="h3 mb-2 " style=" color:white;">Update Credentials </h1>
+  <p class="mb-4" ">{{current_user.username}} Profile</p>
+</div>
+<div class="card mx-auto shadow" style="margin-top: 5px;" >
+    <div class="card-body">
+    <h4 class="card-title mb-4">Update Profile</h4>
+   <form method="POST">
+       {{ form.hidden_tag() }}
+       <div class="form-group">
+           <img src='' class="img-sm rounded-circle border">
+       </div>
+      <div class="form-col">
+          <div class="col form-group">
+              <!--Username-->
+              {{ form.username.label() }}
+              {{ form.username(class='form-control form-control-user', placeholder='Username', value=current_user.username) }}
+          </div> <!-- form-group end.// -->
+          <div class="col form-group">
+              <!--Email-->
+            {{ form.email_address.label() }}
+            {{ form.email_address(class='form-control form-control-user', placeholder='Email Address', value=current_user.email_address) }}
 
-    <div class="container">
+          </div> <!-- form-group end.// -->
 
-        <div class="card o-hidden border-0 shadow-lg my-5">
-            <div class="card-body p-0">
-                <!-- Nested Row within Card Body -->
-                <div class="row">
-                    <div class="col-lg-5 d-none d-lg-block bg-register-image"></div>
-                    <div class="col-lg-7">
-                        <div class="p-5">
-                            <div class="text-center">
-                                <h1 class="h4 text-gray-900 mb-4">Create an Account!</h1>
-                            </div>
-                            <form class="user" method="POST">
-                                {{ form.hidden_tag() }}
-                                <!--This flask built in tag protects our site
-                                from Cross Site Request Forgery (CSRF) Attack -->
-                                <!--this attack basically may attack or steal
-                                your database -->
-                                <div class="form-group row">
-                                    <!--userName-->
-                                    {{ form.username.label() }}
-                                    {{ form.username(class='form-control form-control-user', placeholder='Username') }}
-                                    <!-- Flask Forms Feature -->
-                                </div>
-                                <div class="form-group row">
-                                    <!--Email-->
-                                        {{ form.email_address.label() }}
-                                        {{ form.email_address(class='form-control form-control-user', placeholder='Email Address') }}
-                                </div>
-                                <div class="form-group row">
-                                    <!--Password1-->
-                                    <div class="col-sm-6 mb-3 mb-sm-0">
-                                        {{ form.password1.label() }}
-                                        {{ form.password1(class='form-control form-control-user', placeholder='Password') }}
-                                    </div>
-                                    <div class="col-sm-6">
-                                        <!--Password2-->
-                                        {{ form.password2.label() }}
-                                        {{ form.password2(class='form-control form-control-user', placeholder='Repeat Password') }}
-                                    </div>
-                                </div>
-                                {{ form.submit(class='btn btn-primary btn-user btn-block') }}
-                            </form>
-                            <hr>
-                            <div class="text-center">
-                                <a class="small" href="{{ url_for('forgot_password_page') }}">Forgot Password?</a>
-                            </div>
-                            <div class="text-center">
-                                <a class="small" href="{{ url_for('login_page') }}">Already have an account? Login!</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+          <div class="col form-group">
+                <!--Gender-->
+                {{ form.gender.label() }}
+                {{ form.gender(class='form-control form-control-user') }}
+          </div> <!-- form-group end.// -->
+      </div> <!-- form-row.// -->
+      <div class="form-row">
+        <div class= "form-group col-md-6">
+            {{ form.password1.label() }}
+            {{ form.password1(class='form-control form-control-user', placeholder='Password') }}
+
         </div>
+          <div class="form-group col-md-6" >
 
-    </div>
+              <!--Password2-->
+            {{ form.password2.label() }}
+            {{ form.password2(class='form-control form-control-user', placeholder='Repeat Password') }}
 
-    <!-- Bootstrap core JavaScript-->
-    <script src="vendor/jquery/jquery.min.js"></script>
-    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+          </div> <!-- form-group end.// -->
+          </div>
+      <div class="form-row">
+          <div class="form-group col-md-6">
 
-    <!-- Core plugin JavaScript-->
-    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+          </div> <!-- form-group end.// -->
+          <div class="form-group col-md-6">
 
-    <!-- Custom scripts for all pages-->
-    <script src="js/sb-admin-2.min.js"></script>
+          </div> <!-- form-group end.// -->
+      </div> <!-- form-row.// -->
 
-</body>
+      <button class="btn btn-primary btn-block">Save info</button>
+    </form>
+    </div> <!-- card-body.// -->
+  </div>
+  </div>
 
 {% endblock %}

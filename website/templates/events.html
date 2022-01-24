@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% block title %}Events{% endblock %}
+
+{% block content %}
+
+
+ <div class="row mt-4">
+     <br>
+    <div class="container-fluid" style="margin-top: 30px;">
+        <div class="text-white bg-dark text-white shadow-lg " style="padding: 35px;">
+          <h1 class="h3 mb-2 " style=" color:white;">Manage Events</h1>
+          <p class="mb-4">Simply Manage Events here.</p>
+    </div>
+        <br>
+        {% for i in events %}
+        <div class="d-inline-block w-100">
+            <div class="col-12 shadow p-3 mb-5 bg-primary rounded d-inline-block w-100", style="color:black; background-color: azure!important;">
+
+                <form action="{{url_for('deleteEvents')}}" class="" method="POST">
+                    <input type="hidden" name="uuid" value="{{events[i].get_id()}}">
+                    <button type="submit" class="close" data-dismiss="modal" aria-label="Close" style="color:white">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                </form>
+                <h3>{{events[i].get_title()}}</h3>
+                <p>{{i}}</p>
+                <p style="width: 400px; word-wrap: break-word;">{{events[i].get_description()}}</p>
+                <br>
+                <p class=""><b>Created On: {{events[i].get_date_added()}} {{events[i].get_time_added()}}</b></p>
+                <p class=""><p><b>Last Updated On: {{events[i].get_update_date()}} {{events[i].get_updated_time()}}</b></p>
+                <form action="{{url_for('deleteEvents')}}" class="d-inline-block" method="POST">
+                    <input type="hidden" name="uuid" value="{{events[i].get_id()}}">
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+                &nbsp;
+                <button class="btn btn-warning" data-toggle="modal" data-target="#UpdateNoteModal--">Update</button>
+            </div>
+        </div>
+        {% endfor %}
+        <button type="button" class="btn btn-light shadow btn-lg btn-block" data-toggle="modal" data-target="#exampleModal" style="margin-left: 10px; height: 222px;padding-right: 150px;padding-left: 150px;">
+        <img src="../static/img/EventIcon.png" height="50%">
+        </button>
+
+
+    </div>
+<br>
+<br>
+<br>
+ <!-- Button trigger modal -->
+
+
+  <!-- Create Note Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Add Event</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form method="POST">
+        <div class="modal-body">
+                {{ form.title.label() }}
+                {{ form.title(class='form-control form-control-user', placeholder='Enter Title') }}
+                {{ form.description.label() }}
+                {{ form.description(class='form-control form-control-user', placeholder='Enter Description') }}
+            </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        {{ form.submit(class='btn btn-primary btn-user ') }}
+        </div>
+    </form>
+      </div>
+    </div>
+  </div>
+
+
+    <!-- Update Event Modal   -->
+
+  <div class="modal fade" id="UpdateNoteModal--" tabindex="-1" role="dialog" aria-labelledby="UpdateNoteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="UpdateNoteModalLabel">Update Event</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form action="" class="d-inline-block" method="POST">
+        <div class="modal-body">
+                <input type="hidden" name="uuid" value="">
+
+            </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Update Event</button>
+        </div>
+    </form>
+      </div>
+    </div>
+  </div>
+
+ </div>
+{% endblock %}

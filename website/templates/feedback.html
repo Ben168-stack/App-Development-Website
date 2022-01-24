@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %} Manage Feedbacks{% endblock %}
+
+
+{% block content %}
+<style>
+ .checked {
+  color: #4e73df;
+}
+
+.unchecked {
+    color: darkgray;
+}
+</style>
+<div class="container-fluid">
+<div class="bg-gradient-info text-white " style="padding: 35px; margin-bottom: 20px;">
+    <h1 class="h3 mb-2 " style=" color:white;">Manage Feedbacks </h1>
+    <p class="mb-4" >Feedback. Feedback. Feedback. What do your users think?</p>
+</div>
+</div>
+<div class="container">
+
+{% for x in feedback_dict %}
+<div class="card shadow mb-4">
+    <!-- Card Header - Dropdown -->
+
+    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+        <h6 class="m-0 font-weight-bold text-primary">{{feedback_dict[x].get_sender()}} {% for x in range(feedback_dict[x].get_rating()) %}
+            <span class="fa fa-star checked"></span>
+
+            {% endfor %}
+
+            {% for x in range(5 - feedback_dict[x].get_rating()) %}
+            <span class="fa fa-star unchecked"></span>
+        {% endfor %} | {{ feedback_dict[x].get_title().capitalize() }}</h6>
+        <div class="dropdown no-arrow">
+            <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
+                <div class="dropdown-header">Action: </div>
+                <form method="POST" action="{{ url_for('delete_feedback') }}">
+                <input type="hidden" name="uuid" value="{{feedback_dict[x].get_id()}}">
+                <input class="dropdown-item" type="submit" value="Delete">
+            </form>
+            </div>
+        </div>
+    </div>
+    <!-- Card Body -->
+    <div class="card-body">
+    <b>Remarks:</b> {{ feedback_dict[x].get_description() }}<br>
+        <b>Favourite:</b> {{ feedback_dict[x].get_favourite() }}<br>
+            <b>Least Favourite:</b> {{feedback_dict[x].get_least_favourite()}}<br>
+                <b>Improvement:</b> {{feedback_dict[x].get_improvement()}}<br>
+
+    </div>
+</div>
+{% endfor %}
+</div>
+
+{% endblock %}

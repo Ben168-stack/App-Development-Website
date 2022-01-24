@@ -9,17 +9,13 @@
         <ul class="list-group">
             <a class="list-group-item " href="{{ url_for('profile_page') }}"> Account overview  </a>
             <a class="list-group-item active" href="{{ url_for('past_orders') }}"> My Orders </a>
-            <a class="list-group-item" href="#"> My wishlist </a>
-            <a class="list-group-item" href="#"> Return and refunds </a>
-            <a class="list-group-item" href="#">Settings </a>
-            <a class="list-group-item" href="#"> My Selling Items </a>
-            <a class="list-group-item" href="#"> Received orders </a>
+            <a class="list-group-item" href="{{ url_for('wish_list') }}"> My wishlist </a>
+            <a class="list-group-item" href="{{ url_for('appointment') }}">Bookings</a>
+            <a class="list-group-item" href="{{ url_for('Inventory_Management') }}"> My Selling Items </a>
+            <a class="list-group-item" href=""> Ticket History </a>
         </ul>
     </aside> <!-- col.// -->
     <main class="col-md-9">
-
-        <!-- Recent Orders card Start-->
-        <article class="card  mb-3">
             <!-- ========================= TABLE ========================= -->
 <div class="card shadow mb-4">
         <div class="card-header py-3">
@@ -32,10 +28,9 @@
                         <tr>
                             <th>Barcode</th>
                             <th>Item</th>
-							<th>Price</th>
-                            <th>Quantity</th>
-                            <th>Owner</th>
-                            <th>Owner ID</th>
+							<th>Total Cost</th>
+                            <th>Data Purchased</th>
+                            <th>Amount Purchased</th>
 							<th>More Info</th>
                         </tr>
                     </thead>
@@ -43,10 +38,9 @@
                         <tr>
                             <th>Barcode</th>
                             <th>Item</th>
-							<th>Price</th>
-                            <th>Quantity</th>
-                            <th>Owner</th>
-                            <th>Owner ID</th>
+							<th>Total Cost</th>
+                            <th>Data Purchased</th>
+                            <th>Amount Purchased</th>
                             <th>More Info</th>
 
 
@@ -59,10 +53,9 @@
                         <tr>
                             <td>{{items[i].get_id()}}</td>
 							<td>{{items[i].get_name()}}</td>
-							<td>${{ "{:.2f}".format(items[i].get_price()) }}</td>
-                            <td>{{items[i].get_quantity()}}</td>
-                            <td>{{items[i].get_owner()}}</td>
-                            <td>{{items[i].get_owner_id()}}</td>
+							<td>${{ "{:.2f}".format(items[i].get_total_cost()) }}</td>
+                            <td>{{items[i].get_date_purchase()}}</td>
+                            <td>{{items[i].get_qty_purchased()}}</td>
                             <td>
                                 <button class="btn btn-outline btn-info" data-toggle="modal" data-target="#Modal-MoreInfo--{{items[i].get_id()}}">More Info</button>
                             </td>
@@ -79,7 +72,7 @@
 
 <!-- More Info Modal -->
 {% for i in items %}
-<div class="modal fade" id="Modal-MoreInfo--{{items[i].get_id()}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+<div class="modal fade" id="Modal-MoreInfo--{{items[i].get_id()}}" style="margin-top:100px;" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
         aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -94,8 +87,10 @@
                     <p>Name: {{items[i].get_name()}}</p>
                     <p>Description: {{items[i].get_description()}}</p>
                     <p>Price: ${{items[i].get_price()}}</p>
-                    <p>Items in Stock: {{items[i].get_quantity()}}</p>
-                    <p>Owner: {{items[i].get_owner()}}</p>
+                    <hr>
+                    <p>Total Cost: ${{ "{:.2f}".format(items[i].get_total_cost()) }}</p>
+                    <p>Purchased Item on: {{items[i].get_date_purchase()}}</p>
+                    <p>Amount Purchased: {{items[i].get_qty_purchased()}}</p>
                   </div>
                    <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>

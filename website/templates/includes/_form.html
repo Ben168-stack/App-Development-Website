@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <link rel="stylesheet" href="../static/css/form.css">
+    <link rel="stylesheet" href="../static/css/Landingbase.css">
 </head>
 <body>
 
@@ -17,16 +18,37 @@
     </div>
 
     <!-- Login Form -->
-    <form>
-      <input type="text" id="login" class="fadeIn second" name="login" placeholder="Username">
-      <input type="text" id="password" class="fadeIn third" name="login" placeholder="Password">
-      <input type="submit" class="fadeIn fourth" value="Log In">
+    <form class="user" method="POST">
+        {{ form.hidden_tag() }}
+        <!--This flask built in tag protects our site
+        from Cross Site Request Forgery (CSRF) Attack -->
+        <!--this attack basically may attack or steal
+        your database -->
+        <div class="form-group fadeIn second">
+            <!--User Name-->
+            {{ form.username.label() }}
+            {{ form.username(class="form-control form-control-user", placeholder="User Name") }}
+        </div>
+
+
+        <div class="form-group fadeIn third">
+        <!--Password-->
+            {{ form.password.label() }}
+            {{ form.password(class="form-control form-control-user", placeholder="Password") }}
+        </div>
+
+        <div class="fadeIn fourth">
+        {{ form.submit(class="btn btn-primary btn-user btn-block") }}
+        </div>
+        <hr>
     </form>
 
     <!-- Remind Password -->
-    <div id="formFooter">
-      <a class="underlineHover" href="#">Forgot Password? / </a>
-      <a class="underlineHover" href="#">Register</a>
+    <div class="text-center underlineHover fadeIn fifth">
+        <a class="small" href="{{ url_for('forgot_password_page') }}">Forgot Password?</a>
+    </div>
+    <div class="text-center underlineHover fadeIn sixth">
+        <a class="small" href="{{ url_for('register_page') }}">Create an Account!</a>
     </div>
 
 

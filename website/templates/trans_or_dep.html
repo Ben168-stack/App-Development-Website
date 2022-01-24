@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Money Management{% endblock %}
+
+{% block content %}
+<div class="decision-container" style="display: flexbox; flex-direction: column;">
+
+    <!-- Transaction Module -->
+    <div id="TransferButton" >
+        <a href="{{ url_for('transfer_funds_page') }}" class="TransferModalContainer__Button">
+          <h1 class="ContainerWord" id="TransferWord">Transfer Funds</h1>
+          <div class="InnerButtonContainer">
+            <div class="TransferModalContainer__inner">
+              <img class="img1" src="../static/img/Transfer.png" alt="Icon Goes here!">
+            </div>
+          </div>
+        </a>
+      </div>
+
+      <!-- Deposit Module -->
+      <div id="DepositButton">
+        <a href="{{ url_for('deposit') }}" class="TransferModalContainer__Button">
+          <h1 class="ContainerWord" id="DepositWord">Deposit Funds</h1>
+          <div class="InnerButtonContainer">
+            <div class="TransferModalContainer__inner">
+              <img class="img1" src="../static/img/Deposit.png" alt="Icon Goes here!">
+            </div>
+          </div>
+        </a>
+      </div>
+
+</div>
+{% endblock %}

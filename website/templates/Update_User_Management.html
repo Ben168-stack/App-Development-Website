@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Update User Page{% endblock %}
+<!-- Custom fonts for this template-->
+<link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+<link
+    href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+    rel="stylesheet">
+
+<!-- Custom styles for this template-->
+<link href="css/sb-admin-2.min.css" rel="stylesheet">
+
+
+{% block content %}
+<div class="container-fluid" style="margin-top: 30px;">
+<div class="bg-gradient-secondary text-white shadow-lg " style="padding: 35px;">
+  <h1 class="h3 mb-2 " style=" color:white;">Update {{user.username}} Credentials (Admin Side)</h1>
+</div>
+<div class="card mx-auto shadow" style="margin-top: 5px;" >
+    <div class="card-body">
+   <form method="POST">
+       {{ form.hidden_tag() }}
+      <div class="form-col">
+          <div class="col form-group">
+              <!--Username-->
+              {{ form.username.label() }}
+              {{ form.username(class='form-control form-control-user', placeholder='Username', value=user.username) }}
+          </div> <!-- form-group end.// -->
+          <div class="col form-group">
+              <!--Email-->
+            {{ form.email_address.label() }}
+            {{ form.email_address(class='form-control form-control-user', placeholder='Email Address', value=user.email_address) }}
+
+          </div> <!-- form-group end.// -->
+      </div> <!-- form-row.// -->
+
+      <button class="btn btn-primary btn-block">Save info</button>
+    </form>
+    </div> <!-- card-body.// -->
+  </div>
+  </div>
+
+{% endblock %}

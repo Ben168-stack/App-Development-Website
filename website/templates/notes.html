@@ -5,7 +5,7 @@
  <div class="row mt-4">
         {% for i in user_notes %}
         <div class="d-inline-block w-100">
-            <div class="col-12 shadow p-3 mb-5 bg-info rounded d-inline-block w-100", style="color:white">
+            <div class="col-12 shadow p-3 mb-5 bg-info rounded d-inline-block w-100", style="color:black; background-color: azure!important; border-top: 10px solid #2A27A2;">
 
                 <form action="{{ url_for('deleteNotes') }}" class="" method="POST">
                     <input type="hidden" name="uuid" value="{{ user_notes[i].get_id()}}">
@@ -28,6 +28,13 @@
             </div>
         </div>
         {% endfor %}
+        <hr id="noteDivider" style="border: 0;
+        clear:both;
+        display:block;
+        width: 96%;               
+        background-color:#3a3a3a;
+        height: 1px;
+        opacity: 0.7;">
         <button type="button" class="btn btn-light shadow btn-lg btn-block" data-toggle="modal" data-target="#exampleModal" style="margin-left: 10px; height: 222px;padding-right: 150px;padding-left: 150px;">
         <img src="../static/img/sticky-note.png" height="50%">
         </button>

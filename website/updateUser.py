@@ -7,21 +7,24 @@ from flask_login import login_user,logout_user, login_required
 
 def updateUser(id):
     userID = User.query.filter_by(id = id).first()
-    userID.username = 'newadminuser'
-    db.session.commit()
+    # userID.admin = 1
+    # userID.password_hash = bcrypt.generate_password_hash('admin123').decode('utf-8')
+    # db.session.commit()
     # Get ID of specific user
     # userID = User.query.filter_by(id=id).first()
     # For password
-    # userID.password_hash = bcrypt.generate_password_hash('1234567').decode('utf-8')
+    userID.password_hash = bcrypt.generate_password_hash('admin123').decode('utf-8')
     # For Email
     # userID.email_address = 'newemail@gmail.com'
     # For Username
-    # userID.username = 'newusername'
+    # userID.username = 'dummyaccount'
     # For Budget
-    # userID.budget = 20000
+    # userID.budget = 20000.12
+    # userID.messages = 0
+    db.session.commit()
     return userID.username
 
 
 
 
-print(updateUser(5))
+print(updateUser(1))

@@ -19,4 +19,4 @@ def deleteUser(id):
     # userID.username = 'newusername'
     # For Budget
     # userID.budget = 20000
-deleteUser(3)
+deleteUser(1)

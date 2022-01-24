@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+{% block title %}Edit Cart{% endblock %}
+
+{% block content %}
+<section class="section-content padding-y">
+<div class="container">
+
+<div class="row">
+    <main class="col-md-9">
+<div class="card">
+
+<table class="table table-borderless table-shopping-cart">
+<thead class="text-muted">
+<tr class="small text-uppercase">
+  <th scope="col">Product</th>
+  <th scope="col" width="120">Quantity</th>
+  <th scope="col" width="120">Price</th>
+  <th scope="col" class="text-right" width="200"> </th>
+</tr>
+</thead>
+<tbody>
+{% for i in cart_items %}
+<tr>
+
+    <td>
+        <figure class="itemside">
+            <div class="aside"><img src="../static/img/Hakase.png" class="img-sm" style="height:40px"></div>
+            <figcaption class="info">
+                <a href=""></a>
+                <a href=""></a>
+                <a href="#" class="title text-dark">{{cart_items[i].get_name()}}</a>
+            </figcaption>
+        </figure>
+    </td>
+    <td>
+        <var class="price">{{cart_items[i].get_qty_purchased()}}</var>
+    </td>
+    <td>
+        <div class="price-wrap">
+            <var class="price">${{ "{:.2f}".format(cart_items[i].get_total_cost()) }}</var>
+
+        </div> <!-- price-wrap .// -->
+    </td>
+    <td class="text-right">
+        <button class="btn btn-light" data-toggle="modal" data-target="#Modal-MoreInfo--{{i}}"><i class="fas fa-info-circle"></i></button>
+        <button class="btn btn-light" data-toggle="modal" data-target="#Modal-EditCart--{{i}}">Edit</button>
+    </td>
+
+</tr>
+{% endfor %}
+</tbody>
+</table>
+
+<div class="card-body border-top">
+    <form method="POST" action="{{ url_for('Shopping_Cart') }}">
+    <button type="submit" class="btn btn-primary float-md-right"> Back To Cart <i class="fa fa-chevron-right"></i> </button>
+    </form>
+    <a href="{{ url_for('market_page') }}" class="btn btn-light"> <i class="fa fa-chevron-left"></i> Continue shopping </a>
+</div>
+</div> <!-- card.// -->
+
+<div class="alert alert-success mt-3">
+    <p class="icontext"><i class="icon text-success fa fa-truck"></i> Free Delivery within 1-2 weeks</p>
+</div>
+
+    </main> <!-- col.// -->
+    <aside class="col-md-3">
+        <div class="card mb-3">
+            <div class="card-body">
+            <form>
+                <div class="form-group">
+                    <label>Have coupon?</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" name="" placeholder="Coupon code">
+                        <span class="input-group-append">
+                            <button class="btn btn-primary">Apply</button>
+                        </span>
+                    </div>
+                </div>
+            </form>
+            </div> <!-- card-body.// -->
+        </div>  <!-- card .// -->
+        <div class="card">
+            <div class="card-body">
+                    <dl class="dlist-align">
+                      <dt>Total price:</dt>
+                      <dd class="text-right">${{"{:.2f}".format(total)}}</dd>
+                    </dl>
+                    <dl class="dlist-align">
+                      <dt>Discount:</dt>
+                      <dd class="text-right">SGD 0</dd>
+                    </dl>
+                    <dl class="dlist-align">
+                      <dt>Total:</dt>
+                      <dd class="text-right  h5"><strong>${{"{:.2f}".format(total)}}</strong></dd>
+                    </dl>
+                    <hr>
+                    <p class="text-center mb-3">
+                        <img src="../static/images/Swiss_Logo.png" height="26">
+                    </p>
+
+            </div> <!-- card-body.// -->
+        </div>  <!-- card .// -->
+    </aside> <!-- col.// -->
+</div>
+
+</div> <!-- container .//  -->
+</section>
+
+<!-- More Info Modal -->
+{% for i in cart_items %}
+<div class="modal fade" style="margin-top:100px;"  id="Modal-MoreInfo--{{i}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">{{cart_items[i].get_name()}}</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>{{i}}</p>
+                    <p>Barcode: {{cart_items[i].get_id()}}</p>
+                    <p>Name: {{cart_items[i].get_name()}}</p>
+                    <p>Description: {{cart_items[i].get_description()}}</p>
+                    <p>Price: ${{ "{:.2f}".format(cart_items[i].get_price()) }}</p>
+                    <p>Quantity Purchased: {{cart_items[i].get_qty_purchased()}}</p>
+                    <p>Seller: {{cart_items[i].get_owner()}}</p>
+                  </div>
+                   <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+<!--Edit Cart Modal-->
+<div class="modal fade" style="margin-top:100px;" id="Modal-EditCart--{{i}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">{{cart_items[i].get_name()}}</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <form action="{{ url_for('Edit_Shopping_Cart_Item') }}" method="POST">
+                <div class="modal-body">
+                    {{ edit_cart_form.quantity.label() }}
+                    {{ edit_cart_form.quantity(class='form-control form-control-user', placeholder='Enter New Quantity') }}
+                  </div>
+                   <div class="modal-footer">
+
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <input type="hidden" name="uuid" value="{{i}}">
+                    <input type="hidden" name="uuid2" value="{{cart_items[i].get_id()}}">
+                    <input type="hidden" name="uuid3" value="{{cart_items[i].get_owner_id()}}">
+                    {{ edit_cart_form.submit(class='btn btn-primary btn-user ') }}
+                    </div>
+                </form>
+                </div>
+
+            </div>
+        </div>
+{% endfor %}
+
+{% endblock %}

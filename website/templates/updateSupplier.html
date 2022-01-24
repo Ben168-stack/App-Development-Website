@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Updating Supplier{% endblock %}
+
+{% block content %}
+
+    <form class="user" method="POST">
+        {{ form.hidden_tag() }}
+        <!--This flask built in tag protects our site
+        from Cross Site Request Forgery (CSRF) Attack -->
+        <!--this attack basically may attack or steal
+        your database -->
+
+        <div class="form-group row">
+            <!--userName-->
+            {{ form.company.label() }}
+            {{ form.company(class='form-control form-control-user', placeholder='Company') }}
+            <!-- Flask Forms Feature -->
+        </div>
+        <div class="form-group row">
+            <!--Email-->
+                {{ form.remarks.label() }}
+                {{ form.remarks(class='form-control form-control-user', placeholder='Remarks') }}
+        </div>
+        <div class="form-group row">
+            <!--Password1-->
+            <div class="col-sm-6 mb-3 mb-sm-0">
+                {{ form.phone.label() }}
+                {{ form.phone(class='form-control form-control-user', placeholder='Phone') }}
+            </div>
+            <div class="col-sm-6">
+                <!--Password2-->
+                {{ form.email.label() }}
+                {{ form.email(class='form-control form-control-user', placeholder='Email Address') }}
+            </div>
+        </div>
+        {{ form.submit(class='btn btn-primary btn-user btn-block') }}
+    </form>
+
+{% endblock %}

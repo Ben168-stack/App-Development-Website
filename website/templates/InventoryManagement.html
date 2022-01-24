@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+{% block title %}Inventory Management{% endblock %}
+
+{% block content %}
+<section class="section-content padding-y">
+<div class="container">
+<div class="row">
+    <aside class="col-md-3">
+        <ul class="list-group">
+            <a class="list-group-item " href="{{ url_for('profile_page') }}"> Account overview  </a>
+            <a class="list-group-item " href="{{ url_for('past_orders') }}"> My Orders </a>
+            <a class="list-group-item " href="{{ url_for('wish_list') }}"> My wishlist </a>
+            <a class="list-group-item" href="{{ url_for('appointment') }}">Bookings</a>
+            <a class="list-group-item active" href="{{ url_for('Inventory_Management') }}"> My Selling Items </a>
+            <a class="list-group-item" href=""> Ticket History </a>
+        </ul>
+    </aside> <!-- col.// -->
+    <main class="col-md-9">
+
+        <!-- Recent Orders card Start-->
+        <article class="card  mb-3">
+            <!-- ========================= TABLE ========================= -->
+<div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Your Products | {% if products|length == 0 %}You currently have no products for sale{% else %}You have {{products|length}} item for Sale{% endif %}</h6>
+        </div>
+
+            </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Barcode</th>
+                            <th>Item</th>
+							<th>Price</th>
+                            <th>Quantity</th>
+							<th>More Info</th>
+                            <th>Restock</th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <th>Barcode</th>
+                            <th>Item</th>
+							<th>Price</th>
+                            <th>Quantity</th>
+                            <th>More Info</th>
+                            <th>Restock</th>
+                        </tr>
+                    </tfoot>
+
+                    <tbody>
+                        {% for i in products %}
+                        <tr>
+                            <td>{{products[i].get_id()}}</td>
+							<td>{{products[i].get_name()}}</td>
+							<td>${{ "{:.2f}".format(products[i].get_price())}}</td>
+                            <td>{{products[i].get_quantity()}}</td>
+                            <td>
+                                <button class="btn btn-outline btn-info" data-toggle="modal" data-target="#Modal-MoreInfo--{{products[i].get_id()}}">More Info</button>
+                            </td>
+                            <td>
+                                <button class="btn btn-outline btn-warning" data-toggle="modal" data-target="#Modal-Restock--{{products[i].get_id()}}">Restock Item</button>
+                            </td>
+                        </tr>
+                        {%endfor%}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+        </div>
+    </div>
+    </section>
+
+
+
+<!-- More Info Modal -->
+{% for i in products %}
+<div class="modal fade" style="margin-top:100px;" id="Modal-MoreInfo--{{products[i].get_id()}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel"></h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>{{i}}</p>
+                    <p>Barcode: {{products[i].get_id()}}</p>
+                    <p>Name: {{products[i].get_name()}}</p>
+                    <p>Description: {{products[i].get_description()}}</p>
+                    <p>Price: ${{ "{:.2f}".format(products[i].get_price())}}</p>
+                    <p>Quantity: {{products[i].get_quantity()}}</p>
+
+                  </div>
+                   <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+<!--Restock Modal-->
+<div class="modal fade" style="margin-top:100px;" id="Modal-Restock--{{products[i].get_id()}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Restock {{products[i].get_name()}}</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <form action="{{ url_for('Restock_Item') }}" method="POST">
+                <div class="modal-body">
+                    {{ restock_form.quantity.label() }}
+                    {{ restock_form.quantity(class='form-control form-control-user', placeholder='Enter Quantity') }}
+
+                  </div>
+
+                   <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <input id="uuid" name="uuid" type="hidden" value="{{products[i].get_id()}}">
+                    <button class="btn btn-success" type="submit">Restock</button>
+
+                    </div>
+                </div>
+                </form>
+
+            </div>
+        </div>
+
+{%endfor%}
+
+
+{% endblock %}

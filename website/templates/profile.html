@@ -11,11 +11,10 @@
         <ul class="list-group">
             <a class="list-group-item active" href="{{ url_for('profile_page') }}"> Account overview  </a>
             <a class="list-group-item" href="{{ url_for('past_orders') }}"> My Orders </a>
-            <a class="list-group-item" href="#"> My wishlist </a>
-            <a class="list-group-item" href="#"> Return and refunds </a>
-            <a class="list-group-item" href="#">Settings </a>
-            <a class="list-group-item" href="#"> My Selling Items </a>
-            <a class="list-group-item" href="#"> Received orders </a>
+            <a class="list-group-item" href="{{ url_for('wish_list') }}"> My wishlist </a>
+            <a class="list-group-item" href="{{ url_for('appointment') }}">Bookings</a>
+            <a class="list-group-item" href="{{ url_for('Inventory_Management') }}"> My Selling Items </a>
+            <a class="list-group-item" href=""> Ticket History </a>
         </ul>
     </aside> <!-- col.// -->
     <main class="col-md-9">
@@ -47,12 +46,12 @@
                     <strong>{{ current_user.email_address }}</strong> &nbsp;
                     <a class="btn-link" href="#" data-toggle="modal" data-target="#editEmailModal">Edit Email</a>
                 </p>
-                <p>
-                    <i class="fa fa-map-marker text-muted"></i> &nbsp; My address:
-                     <br>
-                    <strong>Tashkent city, Street name, Building 123, House 321</strong> &nbsp;
-                    <a href="#" class="btn-link"> Edit</a>
-                </p>
+<!--                <p>-->
+<!--                    <i class="fa fa-map-marker text-muted"></i> &nbsp; My address:-->
+<!--                     <br>-->
+<!--                    <strong>Tashkent city, Street name, Building 123, House 321</strong> &nbsp;-->
+<!--                    <a href="#" class="btn-link"> Edit</a>-->
+<!--                </p>-->
                 <p>
                     <i class="fa fa-solid fa-venus-mars"></i> &nbsp; Gender:
                      <br>
@@ -72,26 +71,20 @@
                 <article class="card-group">
                     <figure class="card bg">
                         <div class="p-3">
-                             <h5 class="card-title">38</h5>
+                             <h5 class="card-title">{{owned_items|length}}</h5>
                             <span>Orders</span>
                         </div>
                     </figure>
                     <figure class="card bg">
                         <div class="p-3">
-                             <h5 class="card-title">5</h5>
+                             <h5 class="card-title">{{wished_items|length}}</h5>
                             <span>Wishlists</span>
                         </div>
                     </figure>
                     <figure class="card bg">
                         <div class="p-3">
-                             <h5 class="card-title">12</h5>
-                            <span>Awaiting delivery</span>
-                        </div>
-                    </figure>
-                    <figure class="card bg">
-                        <div class="p-3">
-                             <h5 class="card-title">50</h5>
-                            <span>Delivered items</span>
+                             <h5 class="card-title">{{products|length}}</h5>
+                            <span>Products For Sale</span>
                         </div>
                     </figure>
                 </article>
@@ -102,45 +95,45 @@
 
 
         <!-- Recent Orders card Start-->
-        <article class="card  mb-3">
-            <div class="card-body">
-                <h5 class="card-title mb-4">Recent orders </h5>
-                <div class="row">
-                <div class="col-md-6">
-                    <figure class="itemside  mb-3">
-                        <div class="aside"><img src="../static/images/items/1.jpg" width="150px" class="border img-sm"></div>
-                        <figcaption class="info">
-                            <time class="text-muted"><i class="fa fa-calendar-alt"></i> 12.09.2019</time>
-                            <p>Great item name goes here </p>
-                            <span class="text-warning">Pending</span>
-                        </figcaption>
-                    </figure>
-                </div> <!-- col.// -->
-                <div class="col-md-6">
-                    <figure class="itemside  mb-3">
-                        <div class="aside"><img src="../static/images/items/2.jpg" width="150px" class="border img-sm"></div>
-                        <figcaption class="info">
-                            <time class="text-muted"><i class="fa fa-calendar-alt"></i> 12.09.2019</time>
-                            <p>Machine for kitchen to blend </p>
-                            <span class="text-success">Departured</span>
-                        </figcaption>
-                    </figure>
-                </div> <!-- col.// -->
-                <div class="col-md-6">
-                    <figure class="itemside mb-3">
-                        <div class="aside"><img src="../static/images/items/3.jpg" class="border img-sm" width="150px"></div>
-                        <figcaption class="info">
-                            <time class="text-muted"><i class="fa fa-calendar-alt"></i> 12.09.2019</time>
-                            <p>Ladies bag original leather </p>
-                            <span class="text-success">Shipped  </span>
-                        </figcaption>
-                    </figure>
-                </div> <!-- col.// -->
-            </div> <!-- row.// -->
+<!--        <article class="card  mb-3">-->
+<!--            <div class="card-body">-->
+<!--                <h5 class="card-title mb-4">Recent orders </h5>-->
+<!--                <div class="row">-->
+<!--                <div class="col-md-6">-->
+<!--                    <figure class="itemside  mb-3">-->
+<!--                        <div class="aside"><img src="../static/images/items/1.jpg" width="150px" class="border img-sm"></div>-->
+<!--                        <figcaption class="info">-->
+<!--                            <time class="text-muted"><i class="fa fa-calendar-alt"></i> 12.09.2019</time>-->
+<!--                            <p>Great item name goes here </p>-->
+<!--                            <span class="text-warning">Pending</span>-->
+<!--                        </figcaption>-->
+<!--                    </figure>-->
+<!--                </div> &lt;!&ndash; col.// &ndash;&gt;-->
+<!--                <div class="col-md-6">-->
+<!--                    <figure class="itemside  mb-3">-->
+<!--                        <div class="aside"><img src="../static/images/items/2.jpg" width="150px" class="border img-sm"></div>-->
+<!--                        <figcaption class="info">-->
+<!--                            <time class="text-muted"><i class="fa fa-calendar-alt"></i> 12.09.2019</time>-->
+<!--                            <p>Machine for kitchen to blend </p>-->
+<!--                            <span class="text-success">Departured</span>-->
+<!--                        </figcaption>-->
+<!--                    </figure>-->
+<!--                </div> &lt;!&ndash; col.// &ndash;&gt;-->
+<!--                <div class="col-md-6">-->
+<!--                    <figure class="itemside mb-3">-->
+<!--                        <div class="aside"><img src="../static/images/items/3.jpg" class="border img-sm" width="150px"></div>-->
+<!--                        <figcaption class="info">-->
+<!--                            <time class="text-muted"><i class="fa fa-calendar-alt"></i> 12.09.2019</time>-->
+<!--                            <p>Ladies bag original leather </p>-->
+<!--                            <span class="text-success">Shipped  </span>-->
+<!--                        </figcaption>-->
+<!--                    </figure>-->
+<!--                </div> &lt;!&ndash; col.// &ndash;&gt;-->
+<!--            </div> &lt;!&ndash; row.// &ndash;&gt;-->
 
-            <a href="#" class="btn btn-outline-primary"> See all orders  </a>
-            </div> <!-- card-body .// -->
-        </article> <!-- card.// -->
+<!--            <a href="{{ url_for('past_orders') }}" class="btn btn-outline-primary"> See all orders  </a>-->
+<!--            </div> &lt;!&ndash; card-body .// &ndash;&gt;-->
+<!--        </article> &lt;!&ndash; card.// &ndash;&gt;-->
         <!-- Recent Orders card End-->
 
         <!-- Password and Authentication Card Start-->
@@ -161,7 +154,7 @@
 
 
 <!--Delete Account Modal-->
-<div class="modal fade" id="deleteprofileModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+<div class="modal fade" style="margin-top:100px;" id="deleteprofileModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
         aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -180,7 +173,7 @@
         </div>
     </div>
 <!-- Edit Username -->
-<div class="modal fade" id="editUsernameModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+<div class="modal fade" style="margin-top:100px;" id="editUsernameModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
         aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -205,7 +198,7 @@
         </div>
 </div>
 <!-- Edit Email -->
-<div class="modal fade" id="editEmailModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+<div class="modal fade" style="margin-top:100px;" id="editEmailModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
         aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -230,7 +223,7 @@
         </div>
 </div>
 <!-- Edit Gender -->
-<div class="modal fade" id="editGenderModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+<div class="modal fade" style="margin-top:100px;" id="editGenderModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
         aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -255,7 +248,7 @@
 </div>
 </div>
 <!--  Change Password  -->
-    <div class="modal fade" id="changepasswordModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    <div class="modal fade" style="margin-top:100px;" id="changepasswordModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
         aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
