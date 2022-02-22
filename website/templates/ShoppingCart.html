@@ -24,7 +24,7 @@
 
     <td>
         <figure class="itemside">
-            <div class="aside"><img src="../static/img/Hakase.png" class="img-sm" style="height:40px"></div>
+            <div class="aside"><img src="{{url_for('get_img' , id = cart_items[i].get_image())}}" class="img-sm" style="height:40px"></div>
             <figcaption class="info" style="margin: 10px auto auto auto;">
                 <a href=""></a>
                 <a href=""></a>
@@ -74,19 +74,19 @@
     </main> <!-- col.// -->
     <aside class="col-md-3" style="box-shadow: rgb(209, 209, 209) 1px 1px 25px 1px; border-top: 10px solid #2A27A2;">
         <div class="card mb-3">
-            <div class="card-body">
-            <form>
-                <div class="form-group">
-                    <label>Have coupon?</label>
-                    <div class="input-group">
-                        <input type="text" class="form-control" name="" placeholder="Coupon code">
-                        <span class="input-group-append">
-                            <button class="btn btn-primary">Apply</button>
-                        </span>
-                    </div>
-                </div>
-            </form>
-            </div> <!-- card-body.// -->
+<!--            <div class="card-body">-->
+<!--            <form>-->
+<!--                <div class="form-group">-->
+<!--                    <label>Have coupon?</label>-->
+<!--                    <div class="input-group">-->
+<!--                        <input type="text" class="form-control" name="" placeholder="Coupon code">-->
+<!--                        <span class="input-group-append">-->
+<!--                            <button class="btn btn-primary">Apply</button>-->
+<!--                        </span>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </form>-->
+<!--            </div> &lt;!&ndash; card-body.// &ndash;&gt;-->
         </div>  <!-- card .// -->
         <div class="card">
             <div class="card-body">
@@ -120,7 +120,7 @@
 <div class="modal fade" id="Modal-MoreInfo--{{i}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
         aria-hidden="true">
         <div class="modal-dialog" role="document">
-            <div class="modal-content" style=" height: 500px; left: auto; max-width: 700px; margin: 100px auto auto auto;">
+            <div class="modal-content" style=" left: auto; max-width: 700px; margin: 100px auto auto auto;">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">{{cart_items[i].get_name()}}</h5>
                     <button class="close" type="button" data-dismiss="modal" aria-label="Close">
@@ -128,7 +128,8 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <p>{{i}}</p>
+                    <img class="card-img-top" style="max-height:300px" src="{{url_for('get_img' , id = cart_items[i].get_image())}}" alt="Item Image" />
+                    <hr>
                     <p>Barcode: {{cart_items[i].get_id()}}</p>
                     <p>Name: {{cart_items[i].get_name()}}</p>
                     <p>Description: {{cart_items[i].get_description()}}</p>
@@ -143,7 +144,8 @@
                 </div>
 
             </div>
-        </div>
+</div>
+
 {% endfor %}
 
 {% endblock %}

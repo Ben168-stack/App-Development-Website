@@ -7,7 +7,7 @@
 
 <div class="row">
     <main class="col-md-9">
-<div class="card">
+<div class="card" style="padding: 20px 20px 5px 20px; box-shadow: rgb(209, 209, 209) 1px 1px 25px 1px; border-top: 10px solid #2A27A2;">
 
 <table class="table table-borderless table-shopping-cart">
 <thead class="text-muted">
@@ -24,7 +24,7 @@
 
     <td>
         <figure class="itemside">
-            <div class="aside"><img src="../static/img/Hakase.png" class="img-sm" style="height:40px"></div>
+            <div class="aside"><img src="{{url_for('get_img' , id = cart_items[i].get_image())}}" class="img-sm" style="height:40px"></div>
             <figcaption class="info">
                 <a href=""></a>
                 <a href=""></a>
@@ -64,21 +64,21 @@
 </div>
 
     </main> <!-- col.// -->
-    <aside class="col-md-3">
+    <aside class="col-md-3" style="box-shadow: rgb(209, 209, 209) 1px 1px 25px 1px; border-top: 10px solid #2A27A2;">
         <div class="card mb-3">
-            <div class="card-body">
-            <form>
-                <div class="form-group">
-                    <label>Have coupon?</label>
-                    <div class="input-group">
-                        <input type="text" class="form-control" name="" placeholder="Coupon code">
-                        <span class="input-group-append">
-                            <button class="btn btn-primary">Apply</button>
-                        </span>
-                    </div>
-                </div>
-            </form>
-            </div> <!-- card-body.// -->
+<!--            <div class="card-body">-->
+<!--            <form>-->
+<!--                <div class="form-group">-->
+<!--                    <label>Have coupon?</label>-->
+<!--                    <div class="input-group">-->
+<!--                        <input type="text" class="form-control" name="" placeholder="Coupon code">-->
+<!--                        <span class="input-group-append">-->
+<!--                            <button class="btn btn-primary">Apply</button>-->
+<!--                        </span>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </form>-->
+<!--            </div> &lt;!&ndash; card-body.// &ndash;&gt;-->
         </div>  <!-- card .// -->
         <div class="card">
             <div class="card-body">
@@ -120,7 +120,8 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <p>{{i}}</p>
+                    <img class="card-img-top" style="max-height:300px" src="{{url_for('get_img' , id = cart_items[i].get_image())}}" alt="Item Image" />
+                    <hr>
                     <p>Barcode: {{cart_items[i].get_id()}}</p>
                     <p>Name: {{cart_items[i].get_name()}}</p>
                     <p>Description: {{cart_items[i].get_description()}}</p>

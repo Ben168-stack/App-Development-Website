@@ -6,6 +6,7 @@
 <div class="blockcontent">
 
 <!-- Header Block -->
+<div class="container-fluid">
 
 <div class="HeaderContent">
   <h2>Welcome to Swiss financial services!</h2>
@@ -38,6 +39,19 @@
 </div>
 <br>
 
+<!-- Dashboard Page -->
+<div id="DashboardModalContainer">
+  <a href="{{ url_for('dashboard_page') }}" class="TransferModalContainer__Button">
+    <h1 class="ContainerWord" id="DashboardContainerWord">Dashboard</h1>
+    <div class="InnerButtonContainer">
+      <div class="TransferModalContainer__inner">
+        <img class="img4" src="../static/img/Dashboard_Icon.png" alt="Icon Goes here!">
+      </div>
+    </div>
+  </a>
+</div>
+<br>
+
 <!-- Profile Settings Page -->
 <div id="ProfileModalContainer">
   <a href="{{ url_for('profile_page') }}" class="TransferModalContainer__Button">
@@ -50,6 +64,8 @@
   </a>
 </div>
 <br>
+
+
 <!--Banking Solutions Section-->
 
           <div class="col-md-6 col-lg-4 mb-4 mb-lg-4" data-aos="fade-up" data-aos-delay="200">
@@ -69,5 +85,7 @@
         </div>
       </div>
     </div>
+  </div>
+
 {% endblock %}
 

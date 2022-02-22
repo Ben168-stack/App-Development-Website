@@ -86,8 +86,16 @@ class User(db.Model, UserMixin):
         otp = ''.join(random.choice(chars) for _ in range(size))
         return otp
 
+
+class Img(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    img = db.Column(db.Text, nullable=False)
+    name = db.Column(db.Text, nullable=False)
+    mimetype = db.Column(db.Text, nullable=False)
+
+
 class Item:
-    def __init__(self, id, name, quantity, description, price, owner, owner_id):
+    def __init__(self, id, name, quantity, description, price, owner, owner_id, image):
         self.__id = id
         self.__name = name
         self.__quantity = quantity
@@ -98,6 +106,7 @@ class Item:
         self.__date_purchased = None
         self.__qty_purchased = None
         self.__total_cost = None
+        self.__image = image
 
     def get_id(self):
         return self.__id
@@ -129,6 +138,9 @@ class Item:
     def get_total_cost(self):
         return self.__total_cost
 
+    def get_image(self):
+        return self.__image
+
     def set_id(self, id):
         self.__id = id
 
@@ -158,6 +170,9 @@ class Item:
 
     def set_total_cost(self, total_cost):
         self.__total_cost = total_cost
+
+    def set_image(self, image):
+        self.__image = image
 
 
 # class Item(db.Model):
@@ -343,7 +358,7 @@ class TransactionLogs(Logs):
 
 class SalesLogs(Logs):
     def __init__(self, id, log_description, transaction, time_recorded, date_recorded):
-        super().__init__(id, log_description, time_recorded, date_recorded)
+        super().__init__(id, log_description, date_recorded, time_recorded, )
         self.__transaction = transaction
 
     def get_transaction(self):
@@ -488,12 +503,10 @@ class Tickets(Message):
 
 
 class Booking(Message):
-    def __init__(self, id, description, time_added, time_updated, phone, nric, date, timeslot):
+    def __init__(self, id, description, time_added, time_updated, date, timeslot):
         super().__init__(id, description)
         self.__time_added = time_added
         self.__time_updated = time_updated
-        self.__phone = phone
-        self.__nric = nric
         self.__date = date
         self.__timeslot = timeslot
 
@@ -502,12 +515,6 @@ class Booking(Message):
 
     def get_time_updated(self):
         return self.__time_updated
-
-    def get_phone(self):
-        return self.__phone
-
-    def get_nric(self):
-        return self.__nric
 
     def get_date(self):
         return self.__date
@@ -521,12 +528,6 @@ class Booking(Message):
     def set_time_updated(self, time_updated):
         self.__time_updated = time_updated
 
-    def set_phone(self, phone):
-        self.__phone = phone
-
-    def set_nric(self, nric):
-        self.__nric = nric
-
     def set_date(self, date):
         self.__date = date
 
@@ -536,7 +537,7 @@ class Booking(Message):
 
 class Feedback(Message):
     def __init__(self, id, description, time_added, time_updated, rating, favourite, least_favourite, improvement,
-                 title, sender,sender_id):
+                 title, sender, sender_id):
         super().__init__(id, description)
         self.__time_added = time_added
         self.__time_updated = time_updated
@@ -581,10 +582,10 @@ class Feedback(Message):
     def set_time_updated(self, time_updated):
         self.__time_updated = time_updated
 
-    def set_sender(self,sender):
+    def set_sender(self, sender):
         self.__sender = sender
 
-    def set_sender_id(self,sender_id):
+    def set_sender_id(self, sender_id):
         self.__sender_id = sender_id
 
     def set_rating(self, rating):
@@ -601,4 +602,3 @@ class Feedback(Message):
 
     def set_title(self, title):
         self.__title = title
-

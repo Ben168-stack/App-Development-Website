@@ -2,15 +2,14 @@
 {% block title %}Partners{% endblock %}
 
 {% block content %}
+<div class="container-fluid">
 <h1 class="display-4">Partners</h1>
 <div>
   {% if count == 0 %}
+  <br>
+  <br>
   <p>There are no partners in the database.</p>
-  {% elif count == 1 %}
-  <p>There is 1 partner.</p>
   {% else %}
-  <p>There are {{ count }} partners.</p>
-  {% endif %}
 </div>
 <div>
   <table class="table table-striped">
@@ -52,7 +51,7 @@
 {% for partner in partners %}
 <!-- Delete Partner Modal -->
 <div class="modal fade" id="updateModal--{{partner.get_id()}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
+        aria-hidden="true" style="margin-top:50px;">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -71,5 +70,8 @@
             </div>
         </div>
     </div>
+  </div>
 {% endfor %}
+{% endif %}
+</div>
 {% endblock %}

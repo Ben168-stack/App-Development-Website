@@ -1,14 +1,20 @@
 (function($) {
   "use strict"; // Start of use strict
 
+  const footer = document.getElementById("FooterId");
+  const container = document.getElementById("ContainerFluid");
+  const collapsed = "content--collapsed";
   // Toggle the side navigation
   $("#sidebarToggle, #sidebarToggleTop").on('click', function(e) {
     $("body").toggleClass("sidebar-toggled");
     $(".sidebar").toggleClass("toggled");
+    footer.classList.toggle(collapsed);
+    container.classList.toggle(collapsed);
     if ($(".sidebar").hasClass("toggled")) {
       $('.sidebar .collapse').collapse('hide');
     };
   });
+
 
   // Close any open menu accordions when window is resized below 768px
   $(window).resize(function() {

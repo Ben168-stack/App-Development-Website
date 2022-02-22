@@ -18,12 +18,11 @@
 
                 <form action="{{url_for('deleteEvents')}}" class="" method="POST">
                     <input type="hidden" name="uuid" value="{{events[i].get_id()}}">
-                    <button type="submit" class="close" data-dismiss="modal" aria-label="Close" style="color:white">
+                    <button type="submit" class="close" data-dismiss="modal" aria-label="Close" style="color:grey">
                     <span aria-hidden="true">&times;</span>
                 </button>
                 </form>
                 <h3>{{events[i].get_title()}}</h3>
-                <p>{{i}}</p>
                 <p style="width: 400px; word-wrap: break-word;">{{events[i].get_description()}}</p>
                 <br>
                 <p class=""><b>Created On: {{events[i].get_date_added()}} {{events[i].get_time_added()}}</b></p>
@@ -33,7 +32,7 @@
                     <button type="submit" class="btn btn-danger">Delete</button>
                 </form>
                 &nbsp;
-                <button class="btn btn-warning" data-toggle="modal" data-target="#UpdateNoteModal--">Update</button>
+                <button class="btn btn-warning" data-toggle="modal" data-target="#UpdateNoteModal--{{events[i].get_id()}}">Update</button>
             </div>
         </div>
         {% endfor %}
@@ -49,7 +48,7 @@
  <!-- Button trigger modal -->
 
 
-  <!-- Create Note Modal -->
+  <!-- Create Event Modal -->
   <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
@@ -77,8 +76,8 @@
 
 
     <!-- Update Event Modal   -->
-
-  <div class="modal fade" id="UpdateNoteModal--" tabindex="-1" role="dialog" aria-labelledby="UpdateNoteModalLabel" aria-hidden="true">
+{% for i in events %}
+  <div class="modal fade" id="UpdateNoteModal--{{events[i].get_id()}}" tabindex="-1" role="dialog" aria-labelledby="UpdateNoteModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
         <div class="modal-header">
@@ -87,10 +86,13 @@
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
-        <form action="" class="d-inline-block" method="POST">
+        <form action="{{url_for('updateEvents')}}" class="d-inline-block" method="POST">
         <div class="modal-body">
-                <input type="hidden" name="uuid" value="">
-
+            <input type="hidden" name="uuid" value="{{ events[i].get_id() }}">
+                {{ form.title.label() }}
+                {{ form.title(class='form-control form-control-user', placeholder='Enter Title') }}
+                {{ form.description.label() }}
+                {{ form.description(class='form-control form-control-user', placeholder='Enter Description') }}
             </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -100,6 +102,7 @@
       </div>
     </div>
   </div>
-
+{% endfor %}
  </div>
+
 {% endblock %}

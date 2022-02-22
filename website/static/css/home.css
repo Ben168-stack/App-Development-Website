@@ -69,6 +69,23 @@ body {
     transition: 0.5s ease-in-out;
 }
 
+#DashboardModalContainer {
+    align-items: center;
+    flex-direction: column;
+    background-image: linear-gradient(to right, rgb(221, 221, 221), rgb(173, 173, 173));
+    /* background-color: rgb(113, 132, 238) !important;  */
+    padding: 0 !important;
+    width: 100%;
+    margin: auto !important;
+    border-radius: 15px !important;
+    overflow: hidden !important;
+  }
+  
+  #DashboardModalContainer:hover {
+      background-image: linear-gradient(to right, rgb(247, 247, 247), rgb(212, 212, 212));
+      transition: 0.5s ease-in-out;
+    }
+
 #TransferButton {
     align-items: center;
     flex-direction: column;
@@ -124,6 +141,10 @@ body {
     color: rgb(84, 62, 165);
 }
 
+#DashboardContainerWord {
+    color: rgb(87, 87, 87);
+}
+
 #TransferWord {
     color: rgb(111, 90, 187);
 }
@@ -158,6 +179,10 @@ body {
     transition: 0.5s ease-in-out;
 }
 
+.TransferModalContainer__Button:hover > #DashboardContainerWord {
+    color: rgb(46, 46, 46);
+    transition: 0.5s ease-in-out;
+}
 
 a:link {
     text-decoration: none !important;
@@ -198,6 +223,12 @@ a:link {
     transition: 1s ease-in-out;
 }
 
+.TransferModalContainer__Button:hover .img4 {
+    opacity: 0.3;
+    transition: 1s ease-in-out;
+}
+
+
 .TransferModalContainer__inner {
   clip-path: path(
     "M 390,400 C 390,504.9341 304.9341,590 200,590 95.065898,590 10,504.9341 10,400 V 10 H 200 390 Z"
@@ -225,6 +256,12 @@ a:link {
 }
   
 .img3 {
+    left: 22px;
+    top: 250px;
+    opacity: 0.1;
+}
+
+.img4 {
     left: 22px;
     top: 250px;
     opacity: 0.1;

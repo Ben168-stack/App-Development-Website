@@ -7,8 +7,24 @@
 
 
 <!-- ========================= SECTION INTRO ========================= -->
+
 <section class="section-intro padding-y">
+
 <div class="container">
+<!--    <form>-->
+
+<!--        <div class="input-group">-->
+<!--            <input type="text" class="form-control bg-light border-1 small" placeholder="Search for..."-->
+<!--                aria-label="Search" aria-describedby="basic-addon2">-->
+<!--            <div class="input-group-append">-->
+<!--                <button class="btn btn-primary" type="button">-->
+<!--                    <i class="fas fa-search fa-sm"></i>-->
+<!--                </button>-->
+<!--            </div>-->
+<!--        </div>-->
+
+<!--    </form>-->
+    <br>
 <div id="carousel1_indicator" class="slider-home-banner carousel slide" data-ride="carousel">
   <ol class="carousel-indicators">
     <li data-target="#carousel1_indicator" data-slide-to="0" class="active"></li>
@@ -91,13 +107,17 @@
 <!-- ========================= SECTION CONTENT END// ========================= -->
 
 <!-- ========================= WEBSITE MAIN // ========================= -->
+    {% if items|length != 0 %}
     <div class="container px-4 px-lg-5 mt-5">
         <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
             {% for i in items %}
+            {% if search != None %}
+            {% if search.upper() in items[i].get_name().upper() %}
+
             <div class="col mb-5">
                 <div class="card h-100" style="min-width: 200px; margin: 2px;">
                     <!-- Product image-->
-                    <img class="card-img-top" src="https://dummyimage.com/450x300/dee2e6/6c757d.jpg" alt="..." />
+                    <img class="card-img-top" style="height:200px" src="{{url_for('get_img' , id = items[i].get_image())}}" alt="Item Image" />
                     <!-- Product details-->
                     <div class="card-body p-4" style="height: 185px; text-overflow: ellipsis; flex: none;">
                         <div class="text-center">
@@ -110,6 +130,7 @@
                             Quantity: {{items[i].get_quantity()}} -->
                             <br>
                             Quantity: {{items[i].get_quantity()}}
+
                         </div>
                     </div>
                     <!-- Product actions-->
@@ -118,6 +139,8 @@
                         <div class="text-center" style="margin-top: 15px;">
                         {% if items[i].get_owner() == current_user.username %}
                             <td><button class="btn btn-outline btn-warning">Your Products</button></td>
+                            {% elif items[i].get_id() in DisabledProducts%}
+                            <td><button class="btn btn-outline btn-danger" disabled>Item Disabled</button></td>
                             {% else %}
 							<td>
                                 <button class="btn btn-outline mt-auto btn-success" data-toggle="modal" data-target="#Modal-Purchase--{{items[i].get_id()}}" {% if items[i].get_quantity() == 0 %} disabled {% endif %}>{% if items[i].get_quantity() == 0 %} Out of stock {% else %} Add to cart {% endif %}</button>
@@ -144,136 +167,101 @@
                     </div>
                 </div>
             </div>
-        {% endfor %}
+            {% endif %}
+            {% elif search == None %}
+            <div class="col mb-5">
+                <div class="card h-100" style="min-width: 200px; margin: 2px;">
+                    <!-- Product image-->
+                    <img class="card-img-top" style="height:200px" src="{{url_for('get_img' , id = items[i].get_image())}}" alt="Item Image" />
+                    <!-- Product details-->
+                    <div class="card-body p-4" style="height: 185px; text-overflow: ellipsis; flex: none;">
+                        <div class="text-center">
+                            <!-- Product name-->
+                            <h5 class="fw-bolder" style="font-weight: bolder; font-size:medium; min-height: 48px; text-decoration: underline; font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif">{{items[i].get_name()}}</h5>
+                            <!-- Product price-->
+                            ${{ "{:.2f}".format(items[i].get_price()) }}
+                            <!-- Product Quantity -->
+                            <!-- <br>
+                            Quantity: {{items[i].get_quantity()}} -->
+                            <br>
+                            Quantity: {{items[i].get_quantity()}}
 
-           
-<!-- <div class="card shadow mb-4">
-        <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">Market</h6>
-        </div>
-        {% if items|length == 0 %}
-        <div class="card-header py-3" style="background-color:white;">
-            <p>The Market is Currently Empty</p>
-        </div>
-        {% elif items|length == 1 %}
-        <div class="card-header py-3" style="background-color:white;">
-            <p>The is {{items|length}} Unique Items On The Market</p>
-        </div>
-        {% else %}
-        <div class="card-header py-3" style="background-color:white;">
-            <p>There are {{items|length}} Unique Items On The Market</p>
-        </div>
-        {% endif %}
-
-        <div class="card-body">
-            <div class="table-responsive">
-
-                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                    <thead>
-
-                        <tr>
-                            <th>Image</th>
-                            <th>Barcode</th>
-                            <th>Item</th>
-							<th>Price</th>
-                            <th>Quantity</th>
-                            <th>Purchase</th>
-							<th>More Info</th>
-                            <th>Wish</th>
-                        </tr>
-                    </thead>
-                    <tfoot>
-                        <tr>
-                            <th>Image</th>
-                            <th>Barcode</th>
-                            <th>Item</th>
-							<th>Price</th>
-                            <th>Quantity</th>
-                            <th>Purchase</th>
-                            <th>More Info</th>
-                            <th>Wish</th>
-                        </tr>
-                    </tfoot>
-
-                    <tbody>
-                        {% for i in items %}
-                        <tr>
-                            <td><img src="../static/img/Hakase.png" alt="" height="80px"></td>
-                            <td>{{items[i].get_id()}}</td>
-							<td>${{ "{:.2f}".format(items[i].get_price()) }}</td>
-							<td>{{items[i].get_name()}}</td>
-                            <td>{{items[i].get_quantity()}}</td>
-                            {% if items[i].get_owner() == current_user.username %}
+                        </div>
+                    </div>
+                    <!-- Product actions-->
+                    <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                        <div class="text-center"><button class="btn btn-outline-dark" data-toggle="modal" data-target="#Modal-MoreInfo--{{items[i].get_id()}}">More Info</button></div>
+                        <div class="text-center" style="margin-top: 15px;">
+                        {% if items[i].get_owner() == current_user.username %}
                             <td><button class="btn btn-outline btn-warning">Your Products</button></td>
+                            {% elif items[i].get_id() in DisabledProducts%}
+                            <td><button class="btn btn-outline btn-danger" disabled>Item Disabled</button></td>
                             {% else %}
 							<td>
-                                <button class="btn btn-outline btn-success" data-toggle="modal" data-target="#Modal-Purchase--{{items[i].get_id()}}" {% if items[i].get_quantity() == 0 %} disabled {% endif %}>{% if items[i].get_quantity() == 0 %} Out of stock {% else %} Add to cart {% endif %}</button>
-                            <!--data-target go check the id tag in 'items_modals.html'
-                            near the more Info comment section it targets that to give
-                            each specific item its specific name in title and description -->
-                            <!-- </td>
-                            {% endif %}
-                            <td>
-                                <button class="btn btn-outline btn-info" data-toggle="modal" data-target="#Modal-MoreInfo--{{items[i].get_id()}}">More Info</button>
+                                <button class="btn btn-outline mt-auto btn-success" data-toggle="modal" data-target="#Modal-Purchase--{{items[i].get_id()}}" {% if items[i].get_quantity() == 0 %} disabled {% endif %}>{% if items[i].get_quantity() == 0 %} Out of stock {% else %} Add to cart {% endif %}</button>
+                                <!-- Wishlist -->
+                                {% if items[i].get_owner() != current_user.username %}
+                                {% if items[i].get_id() not in wish_items %}
+                                    <form action="{{ url_for('wish') }}" method="POST" style="margin-top: 15px;">
+                                        <input id="uuid" name="uuid" type="hidden" value="{{items[i].get_id()}}">
+                                        <button class="btn btn-outline btn-danger" type="submit" ><i class="far fa-heart"></i></button>
+                                    </form>
+                                {% else %}
+                                    <form action="{{ url_for('delete_wish') }}" method="POST" style="margin-top: 15px;">
+                                        <input id="uuid" name="uuid" type="hidden" value="{{items[i].get_id()}}">
+                                        <button class="btn btn-outline btn-danger" type="submit" ><i class="fas fa-heart"></i></button>
+                                    </form>
+                                {% endif %}
+                                {% else %}
+                                <button class="btn btn-outline btn-primary" type="submit" >Your Item</button>
+                                {% endif %}
                             </td>
-                            <td>
-                            {% if items[i].get_owner() != current_user.username %}
-                            {% if items[i].get_id() not in wish_items %}
-                                <form action="{{ url_for('wish') }}" method="POST">
-                                    <input id="uuid" name="uuid" type="hidden" value="{{items[i].get_id()}}">
-                                    <button class="btn btn-outline btn-warning" type="submit" >Wish Item</button>
-                                </form>
-                            {% else %}
-                                <form action="{{ url_for('delete_wish') }}" method="POST">
-                                    <input id="uuid" name="uuid" type="hidden" value="{{items[i].get_id()}}">
-                                    <button class="btn btn-outline btn-danger" type="submit" >Unwish Item</button>
-                                </form>
+
                             {% endif %}
-                            {% else %}
-                            <button class="btn btn-outline btn-primary" type="submit" >Your Item</button>
-                            {% endif %}
-
-
-                            </td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-
-                </table>
-
-            </div>
-        </div>
-    </div>
-    </section>
-<!-- More Info Modal-->
-{% for i in items %}
-<div class="modal fade" id="Modal-MoreInfo--{{items[i].get_id()}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        aria-hidden="true" style="margin-top: 100px;">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content" >
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">{{items[i].get_name()}}</h5>
-                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <p>Barcode: {{items[i].get_id()}}</p>
-                    <p>Name: {{items[i].get_name()}}</p>
-                    <p>Description: {{items[i].get_description()}}</p>
-                    <p>Price: ${{ "{:.2f}".format(items[i].get_price()) }}</p>
-                    <p>Items in Stock: {{items[i].get_quantity()}}</p>
-                    <p>Owner: {{items[i].get_owner()}}</p>
-                  </div>
-                   <div class="modal-footer">
-                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-
+                        </div>
                     </div>
                 </div>
-
             </div>
-        </div>
+            {% endif %}
 
+            {% endfor %}
+    </div>
+        {% endif %}
+
+
+
+        
+<!-- More Info Modal-->
+{% for i in items %}
+
+<div class="modal fade" id="Modal-MoreInfo--{{items[i].get_id()}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true" style="margin-top: 100px;">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" >
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">{{items[i].get_name()}}</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <img class="card-img-top" style="max-height:300px" src="{{url_for('get_img' , id = items[i].get_image())}}" alt="Item Image" />
+                <hr>
+                <p>Barcode: {{items[i].get_id()}}</p>
+                <p>Name: {{items[i].get_name()}}</p>
+                <p>Description: {{items[i].get_description()}}</p>
+                <p>Price: ${{ "{:.2f}".format(items[i].get_price()) }}</p>
+                <p>Items in Stock: {{items[i].get_quantity()}}</p>
+                <p>Owner: {{items[i].get_owner()}}</p>
+                </div>
+                <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
 
 
 <!--  Purchase Modal  -->
@@ -289,7 +277,8 @@
                 </div>
                 <form action="{{ url_for('Add_To_Cart') }}" method="POST">
                 <div class="modal-body">
-                    <p>{{i}}</p>
+                    <img class="card-img-top" style="max-height:300px" src="{{url_for('get_img' , id = items[i].get_image())}}" alt="Item Image" />
+                    <hr>
                     <p>Barcode: {{items[i].get_id()}}</p>
                     <p>Name: {{items[i].get_name()}}</p>
                     <p>Description: {{items[i].get_description()}}</p>

@@ -4,8 +4,14 @@
 
 <!-- Supplier Table -->
 {% block content %}
-<h1 class="display-4">Suppliers</h1>
 
+<div class="container-fluid">
+<h1 class="display-4">Suppliers</h1>
+{% if count == 0 %}
+  <br>
+  <br>
+  <p>There are no suppliers in the database.</p>
+{% else %}
   <div>
     <table class="table table-striped">
       <thead>
@@ -44,5 +50,7 @@
 
     </tbody>
   </table>
+</div>
+{% endif %}
 </div>
 {% endblock %}

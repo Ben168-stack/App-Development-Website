@@ -14,6 +14,7 @@
 
     <!-- Own Css -->
     <link rel="stylesheet" href="../static/css/home.css">
+    <link rel="stylesheet" href="../static/css/main.css">
 
     <!-- Custom fonts for this template-->
     <link href="../vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -64,7 +65,7 @@
 <!--    <script src="{{ url_for('static', filename='//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js') }}"></script>-->
 <script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
 <df-messenger
-  chat-icon="https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Ben168-stack&#x2F;App-Development-Website&#x2F;main&#x2F;img&#x2F;Hakase.png"
+  chat-icon="https:&#x2F;&#x2F;pbs.twimg.com&#x2F;media&#x2F;En4qZYLWEAAxB1X.png"
   intent="WELCOME"
   chat-title="Chatty"
   agent-id="221170f4-72db-467a-a988-8de654e227fe"
@@ -191,7 +192,9 @@
                             <h6 class="collapse-header">Other Pages:</h6>
                             <a class="collapse-item" href="{{ url_for('about_us_page') }}">About Us Page</a>
                             <a class="collapse-item" href="{{ url_for('market_page') }}">E-Shopping</a>
+                            <a class="collapse-item" href="{{ url_for('Current_Events_Page') }}">Our Current Events</a>
                             <a class="collapse-item" href="{{ url_for('Add_Item') }}">Add Item</a>
+
                         {% else %}
                         <h6 class="collapse-header">Login Screens:</h6>
                         <a class="collapse-item" href="{{ url_for('about_us_page') }}">About Us Page</a>
@@ -205,7 +208,7 @@
             </li>
 
             <!-- Nav Item - Manage Funds -->
-            <li class="nav-item active">
+            <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#manageFundsPages" aria-expanded="true"
                     aria-controls="collapsePages">
                     <i class="fas fa-fw fa-table"></i>
@@ -228,7 +231,6 @@
 
             <!-- Sidebar Toggler (Sidebar) -->
             <div class="text-center d-none d-md-inline">
-                To fix, make sure js files are imported in the correct order.
                 <button class="rounded-circle border-0" id="sidebarToggle"></button>
             </div>
 
@@ -255,45 +257,45 @@
                     </button>
 
                     <!-- Topbar Search -->
-<!--                    <form-->
-<!--                        class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">-->
-<!--                        <div class="input-group">-->
-<!--                            <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..."-->
-<!--                                aria-label="Search" aria-describedby="basic-addon2">-->
-<!--                            <div class="input-group-append">-->
-<!--                                <button class="btn btn-primary" type="button">-->
-<!--                                    <i class="fas fa-search fa-sm"></i>-->
-<!--                                </button>-->
-<!--                            </div>-->
-<!--                        </div>-->
-<!--                    </form>-->
+                    <form action="{{ url_for('market_page') }}" method="GET"
+                        class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+                        <div class="input-group">
+                            <input name="search" type="text" class="form-control bg-light border-1 small" placeholder="Search for something in market"
+                                aria-label="Search" aria-describedby="basic-addon2">
+                            <div class="input-group-append">
+                                <button class="btn btn-primary" type="submit">
+                                    <i class="fas fa-search fa-sm"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
 
                     <!-- Topbar Navbar -->
                     <ul class="navbar-nav ml-auto">
 
-                        <!-- Nav Item - Search Dropdown (Visible Only XS) -->
+<!--                         Nav Item - Search Dropdown (Visible Only XS)-->
 <!--                        <li class="nav-item dropdown no-arrow d-sm-none">-->
 <!--                            <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button"-->
 <!--                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">-->
 <!--                                <i class="fas fa-search fa-fw"></i>-->
 <!--                            </a>-->
-                            <!-- Dropdown - Messages -->
-                            <div class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in"
-                                aria-labelledby="searchDropdown">
-                                <form class="form-inline mr-auto w-100 navbar-search">
-                                    <div class="input-group">
-                                        <input type="text" class="form-control bg-light border-0 small"
-                                            placeholder="Search for..." aria-label="Search"
-                                            aria-describedby="basic-addon2">
-                                        <div class="input-group-append">
-                                            <button class="btn btn-primary" type="button">
-                                                <i class="fas fa-search fa-sm"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        </li>
+<!--                            &lt;!&ndash; Dropdown - Messages &ndash;&gt;-->
+<!--                            <div class="dropdown-menu dropdown-menu-right p-3 shadow animated&#45;&#45;grow-in"-->
+<!--                                aria-labelledby="searchDropdown">-->
+<!--                                <form class="form-inline mr-auto w-100 navbar-search">-->
+<!--                                    <div class="input-group">-->
+<!--                                        <input type="text" class="form-control bg-light border-0 small"-->
+<!--                                            placeholder="Search for..." aria-label="Search"-->
+<!--                                            aria-describedby="basic-addon2">-->
+<!--                                        <div class="input-group-append">-->
+<!--                                            <button class="btn btn-primary" type="button">-->
+<!--                                                <i class="fas fa-search fa-sm"></i>-->
+<!--                                            </button>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                </form>-->
+<!--                            </div>-->
+<!--                        </li>-->
 
                         {% if current_user.is_authenticated %}
                         <li class="nav-item">
@@ -356,7 +358,7 @@
                                 <a class="dropdown-item d-flex align-items-center" href="{{ url_for('Shopping_Cart') }}">
                                     <div class="mr-3">
                                         <div class="icon-circle bg-primary">
-                                            <i class="fas fa-file-alt text-white"></i>
+                                            <img src="{{url_for('get_img' , id = cart[x].get_image())}}" class="img-sm" style="height:40px">
                                         </div>
                                     </div>
                                     <div>
@@ -411,13 +413,17 @@
                                     My Selling Items
                                 </a>
 
-                                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#botModal">
-                                    <i class="fas fa-robot fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Chatty
-                                </a>
+<!--                                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#botModal">-->
+<!--                                    <i class="fas fa-robot fa-sm fa-fw mr-2 text-gray-400"></i>-->
+<!--                                    Chatty-->
+<!--                                </a>-->
                                  <a class="dropdown-item" href="{{ url_for('notes') }}" data-toggle="" data-target="">
                                     <i class="far fa-sticky-note fas fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Notepad
+                                </a>
+                                <a class="dropdown-item" href="{{ url_for('ticket_history') }}" data-toggle="" data-target="">
+                                    <i class="fa fa-solid fa-envelope-open-text fas fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Ticket History
                                 </a>
 
                                 <div class="dropdown-divider"></div>
@@ -438,7 +444,7 @@
 
                 <!-- Begin Page Content -->
 
-                <div class="container-fluid" style="padding-left: var(--nav-width); padding-top: 90px;">
+                <div class="container-fluid" id="ContainerFluid" style=" padding-top: 90px;">
                     {% with messages = get_flashed_messages(with_categories=true) %}
                     <!--    with_categories = true means it grabs the categories as well for messages-->
                     {% if messages %}
@@ -473,7 +479,7 @@
 </div>
         <!-- End of Content Wrapper -->
 <!-- Footer -->
-<footer class="page-footer font-small unique-color-dark" style="padding-left: 220px;">
+<footer class="page-footer font-small unique-color-dark" id="FooterId">
 
     <div style="background-color: #4e73df; color:white">
       <div class="container">
@@ -696,43 +702,33 @@
 
 
     <!-- Bootstrap core JavaScript-->
+    <script src="../static/vendor/jquery/jquery.slim.min.js"></script>
+    <script src="../static/vendor/jquery/jquery.min.js"></script>
     <script src="../static/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="{{ url_for('static', filename='../static/vendor/jquery/jquery.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='../static/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
 
     <!-- Core plugin JavaScript-->
     <script src="../static/vendor/jquery-easing/jquery.easing.min.js"></script>
-    <script src="{{ url_for('static', filename='vendor/jquery-easing/jquery.easing.min.js') }}"></script>
 
 
     <!-- Custom scripts for all pages-->
-    <script src="../static/js/sb-admin-2.min.js"></script>
-    <script src="{{ url_for('static', filename='js/sb-admin-2.min.js') }}"></script>
+    <script src="../static/js/sb-admin-2.js"></script>
 
         <!-- Page level plugins -->
     <script src="../static/vendor/chart.js/Chart.min.js"></script>
-    <script src="{{ url_for('static', filename='vendor/chart.js/Chart.min.js') }}"></script>
-
 
 
     <!-- Charts Page level custom scripts -->
     <script src="../static/js/demo/chart-area-demo.js"></script>
     <script src="../static/js/demo/chart-pie-demo.js"></script>
     <script src="../static/js/demo/chart-bar-demo.js"></script>
-    <script src="{{ url_for('static', filename='../static/js/demo/chart-pie-demo.js') }}"></script>
-    <script src="{{ url_for('static', filename='../static/js/demo/chart-bar-demo.js') }}"></script>
-    <script src="{{ url_for('static', filename='../static/js/demo/chart-area-demo.js') }}"></script>
-
+    
     <!--Tables Page level plugins -->
     <script src="../static/vendor/datatables/jquery.dataTables.min.js"></script>
     <script src="../static/vendor/datatables/dataTables.bootstrap4.min.js"></script>
-    <script src="{{ url_for('static', filename='../static/vendor/datatables/jquery.dataTables.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='../static/vendor/datatables/dataTables.bootstrap4.min.js') }}"></script>
-
+   
     <!-- Tables Page level custom scripts -->
     <script src="../static/js/demo/datatables-demo.js"></script>
-    <script src="{{ url_for('static', filename='../static/js/demo/datatables-demo.js') }}"></script>
-
+   
     <!-- Loader Script -->
 <!--    <script src="{{ url_for('static', filename='../static/js/loader.js') }}"></script>-->
 

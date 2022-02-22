@@ -61,23 +61,21 @@
     <!-- ============================ COMPONENT FEEDBACK  ================================= -->
         <div class="card mx-auto row" style="max-width: 800px; background-color:#F5F5F5;">
           <div class="card-body">
-          <h4 class="card-title mb-4">Send Feedback</h4>
+          <h4 class="card-title mb-4">Send Us Some Feedback</h4>
           <form method="POST">
             <div class="form-group" >
             {{ form.title.label() }}
             {{ form.title(class='form-control form-control-user', placeholder='Enter Title') }}
             </div>
-            <div class="form-row">
+            <div class="form-group">
+                {{ form.favourite.label() }}
+                {{ form.favourite(class='form-control form-control-user', placeholder='Enter Your Favourite Thing About our Website') }}
+            </div> <!-- form-group end.// -->
+            <div class="form-group">
+                {{ form.least_favourite.label() }}
+                {{ form.least_favourite(class='form-control form-control-user', placeholder='Enter Your Least Favourite Thing About our Website') }}
+            </div> <!-- form-group end.// -->
 
-                <div class="col form-group">
-                    {{ form.favourite.label() }}
-                    {{ form.favourite(class='form-control form-control-user', placeholder='Enter Your Favourite Thing About our Website') }}
-                </div> <!-- form-group end.// -->
-                <div class="col form-group">
-                    {{ form.least_favourite.label() }}
-                    {{ form.least_favourite(class='form-control form-control-user', placeholder='Enter Your Least Favourite Thing About our Website') }}
-                </div> <!-- form-group end.// -->
-            </div> <!-- form-row.// -->
             <div class="form-group">
                 {{ form.improvement.label() }}
                 {{ form.improvement(class='form-control form-control-user', placeholder='Enter How Can We Improve') }}

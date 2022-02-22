@@ -2,7 +2,7 @@
 {% block title %}Update Partner{% endblock %}
 
 {% block content %}
-
+<div class="container-fluid">
 <h1 class="display-4">Update Partner</h1>
 <form method="POST">
     {{ form.hidden_tag() }}
@@ -24,6 +24,6 @@
   <br>
   {{ form.submit(class='btn btn-primary btn-user btn-block') }}
 </form>
-
+</div>
 {% endblock %}
 

@@ -10,15 +10,48 @@
             <a class="list-group-item " href="{{ url_for('profile_page') }}"> Account overview  </a>
             <a class="list-group-item " href="{{ url_for('past_orders') }}"> My Orders </a>
             <a class="list-group-item" href="{{ url_for('wish_list') }}"> My wishlist </a>
-            <a class="list-group-item" href="{{ url_for('appointment') }}"> Current Appointments </a>
-            <a class="list-group-item active" href="#"> My Selling Items </a>
-            <a class="list-group-item" href=""> Ticket History </a>
+            <a class="list-group-item" href="{{ url_for('appointment') }}"> Bookings </a>
+            <a class="list-group-item" href="{{ url_for('Inventory_Management') }}"> My Selling Items </a>
+            <a class="list-group-item active" href="{{ url_for('ticket_history') }}"> Ticket History </a>
 
         </ul>
     </aside> <!-- col.// -->
     <main class="col-md-9">
+        <div class="container-fluid" style="">
+            <div class="bg-gradient-info text-white shadow-lg " style="padding: 35px;">
+            <h1 class="h3 mb-2 " style=" color:white;">Ticket History</h1>
+        </div>
+        {% for i in tickets %}
+        {% if tickets[i].get_owner() == current_user.username%}
+        <div class="card mx-auto shadow" style="margin-top: 5px;" >
+            <div class="card-body">
+            <h4 class="card-title mb-4">{{ tickets[i].get_title() }}</h4>
+            <p style="width: 400px; word-wrap: break-word;">{{ tickets[i].get_description() }}</p>
+            <p class=""><b>Created On: {{ tickets[i].get_time_added() }}</b></p>
+            {% if tickets[i].get_urgency() == 'Very Urgent' %}
+            <p>Urgency of Ticket: <var style="color:red;">{{ tickets[i].get_urgency() }}</var></p>
+            {% elif tickets[i].get_urgency() == 'Urgent' %}
+            <p>Urgency of Ticket: <var style="color:orange;">{{ tickets[i].get_urgency() }}</var></p>
+            {% else %}
+            <p>Urgency of Ticket: <var style="color:green;">{{ tickets[i].get_urgency() }}</var></p>
+            {% endif %}
+            {% if tickets[i].get_pending_status() == 'Pending' %}
+            <p>Status: <var style="color:blue;">{{ tickets[i].get_pending_status() }}</var></p>
+            {% elif tickets[i].get_pending_status() == 'Resolved' %}
+            <p>Status: <var style="color:green;">{{ tickets[i].get_pending_status() }}</var></p>
+            {% else %}
+            <p">Status: <var style="color:red;">{{ tickets[i].get_pending_status() }}</var></p>
+            {% endif %}
+            <form action="{{url_for('delete_ticket_history',id=i)}}" class="d-inline-block" method="POST">
+                <button type="submit" class="btn btn-danger">Delete</button>
+            </form>&nbsp;
 
+            </div> <!-- card-body.// -->
+          </div>
+        {% endif %}
+    {% endfor %}
 
     </main>
     </section>
+
 {% endblock %}

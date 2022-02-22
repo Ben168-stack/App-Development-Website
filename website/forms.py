@@ -182,8 +182,6 @@ class Ticket_Form(FlaskForm):
 
 
 class Booking_form(FlaskForm):
-    number = StringField(label='Phone Number*', validators=[Length(min=1, max=8), DataRequired()])
-    nric = StringField(label='NRIC Number*', validators=[Length(min=8, max=8), DataRequired()])
     date = DateField(label='Choose a Date*', validators=[DataRequired()])
     time = SelectField(label='Choose a Timeslot*',
                        choices=['9am Morning', '10am Morning', '11am Morning', '12pm Afternoon', '1pm Afternoon',

@@ -12,7 +12,7 @@
             <a class="list-group-item active" href="{{ url_for('wish_list') }}"> My wishlist </a>
             <a class="list-group-item" href="{{ url_for('appointment') }}">Bookings</a>
             <a class="list-group-item" href="{{ url_for('Inventory_Management') }}"> My Selling Items </a>
-            <a class="list-group-item" href=""> Ticket History </a>
+            <a class="list-group-item" href="{{ url_for('ticket_history') }}"> Ticket History </a>
         </ul>
     </aside> <!-- col.// -->
     <main class="col-md-9">
@@ -30,6 +30,7 @@
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                     <thead>
                         <tr>
+                            <th>Image</th>
                             <th>Barcode</th>
                             <th>Item</th>
 							<th>Price</th>
@@ -38,19 +39,18 @@
                     </thead>
                     <tfoot>
                         <tr>
+                            <th>Image</th>
                             <th>Barcode</th>
                             <th>Item</th>
 							<th>Price</th>
                             <th>More Info</th>
-
-
-
                         </tr>
                     </tfoot>
 
                     <tbody>
                         {% for i in items %}
                         <tr>
+                            <td><img class="card-img-top" style="max-height:100px;" src="{{url_for('get_img' , id = items[i].get_image())}}" alt="Item Image" /></td>
                             <td>{{items[i].get_id()}}</td>
 							<td>{{items[i].get_name()}}</td>
 							<td>${{ "{:.2f}".format(items[i].get_price()) }}</td>
@@ -84,6 +84,8 @@
                     </button>
                 </div>
                 <div class="modal-body">
+                    <img class="card-img-top" style="max-height:300px" src="{{url_for('get_img' , id = items[i].get_image())}}" alt="Item Image" />
+                    <hr>
                     <p>Barcode: {{items[i].get_id()}}</p>
                     <p>Name: {{items[i].get_name()}}</p>
                     <p>Description: {{items[i].get_description()}}</p>

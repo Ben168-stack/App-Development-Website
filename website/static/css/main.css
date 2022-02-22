@@ -1,0 +1,42 @@
+.navbar-nav.bg-gradient-primary.sidebar.sidebar-dark.accordion.toggled {
+    max-height: 0.9vh;
+    overflow-x: visible!important;
+    overflow-y: visible!important;
+}
+
+.navbar-nav.bg-gradient-primary.sidebar.sidebar-dark.accordion {
+    max-height: 0.9vh;
+    overflow-x: hidden;
+    overflow-y: visible;
+}
+
+.navbar-nav.bg-gradient-primary.sidebar.sidebar-dark.accordion::-webkit-scrollbar {
+    width: 0;
+}
+
+.page-footer.font-small.unique-color-dark.content--collapsed {
+ margin-left: 100px!important;
+}
+
+.page-footer.font-small.unique-color-dark {
+    margin-left: 220px!important;
+   }
+
+.container-fluid {
+    margin-left: 10px!important;   
+    padding-left: 120px!important;
+}
+
+.container-fluid.content--collapsed {
+    margin: none;
+    margin-left: 5px!important;
+    padding-left: 20px!important;
+   }
+
+/* div.modal-dialog {
+    margin: auto!important;
+} */
+
+.alert {
+    margin-left: 150px!important;
+}

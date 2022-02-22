@@ -1,8 +1,8 @@
 import os
 from website import app, bcrypt
-from flask import render_template, request, flash, redirect, url_for, jsonify, send_from_directory, abort
+from flask import render_template, request, flash, redirect, url_for, jsonify, Response
 from website.models import User, Partners, Notes, Tickets, Tickets_Response, Item, Booking, Feedback, Events, Logs, \
-    TransactionLogs, SalesLogs
+    TransactionLogs, SalesLogs, Img
 from website.forms import RegisterForm, LoginForm, DepositForm, TransferFunds, CreatePartnerForm, UpdatePartnerForm, \
     Add_Notes, Update_Notes, Update_User, Update_Username, Update_Email, Update_Gender, Update_Password, Ticket_Form, \
     Ticket_Reply_Form, UpdateSupplierForm, Add_Item_Form, Purchase_Form, Wish_Form, Update_User_Admin, Booking_form, \
@@ -17,6 +17,9 @@ import pandas as pd
 from flask_mail import Mail, Message
 import qrcode
 import io, base64, PIL
+from werkzeug.utils import secure_filename
+
+# To ensure file name is parsed
 
 # Note that for otp expiry, need to fiddle with js
 
@@ -420,7 +423,7 @@ def sales_data():
         print(f"An Unknown Error has occurred, {e}")
 
     for i in sales_dict:
-        dates.append(sales_dict[i].get_time_recorded())
+        dates.append(sales_dict[i].get_date_recorded())
         transactions.append(sales_dict[i].get_transaction())
 
     df = pd.DataFrame(list(zip(dates, transactions)), columns=["dates", "trans"])
@@ -465,7 +468,7 @@ def transaction_data():
         print(f"An Unknown Error has occurred, {e}")
 
     for i in logs_dict:
-        dates.append(logs_dict[i].get_time_recorded())
+        dates.append(logs_dict[i].get_date_recorded())
         transactions.append(logs_dict[i].get_transaction())
 
     df = pd.DataFrame(list(zip(dates, transactions)), columns=["dates", "log"])
@@ -538,16 +541,19 @@ def delete_appointment(id):
     return redirect(url_for('appointment'))
 
 
-@app.route('/markets')
+@app.route('/markets', methods=['POST', "GET"])
 @login_required
 def market_page():
     purchase_form = Purchase_Form()
     Items_Dict = {}
     Wish_Dict = {}
     event_dict = {}
+    DisabledProducts_Dict = {}
+    search = request.args.get('search')
     try:
         Wish_Database = shelve.open('website/databases/wishlist/wishlist.db', 'r')
         event_database = shelve.open('website/databases/Events/event.db', 'c')
+
 
         if "EventInfo" not in event_database:
             event_database["EventInfo"] = event_dict
@@ -558,10 +564,8 @@ def market_page():
             Wish_Dict = Wish_Database[str(current_user.id)]
         else:
             Wish_Database[str(current_user.id)] = Wish_Dict
-        if str(current_user.id) in Wish_Database:
-            Wish_Dict = Wish_Database[str(current_user.id)]
-        else:
-            Wish_Database[str(current_user.id)] = Wish_Dict
+
+
 
     except IOError:
         print("Unable to Read File")
@@ -572,6 +576,7 @@ def market_page():
     try:
         Item_Database = shelve.open('website/databases/items/items.db', 'r')
         products_database = shelve.open('website/databases/products/products.db', 'c')
+        DisableProducts_Database = shelve.open('website/databases/disabled_products/disable_products.db', 'c')
         if 'ItemInfo' in Item_Database:
             Items_Dict = Item_Database['ItemInfo']
             Item_Database.close()
@@ -579,16 +584,37 @@ def market_page():
             Item_Database['ItemInfo'] = Items_Dict
             Item_Database.close()
 
+        if "DisableProducts" in DisableProducts_Database:
+            DisabledProducts_Dict = DisableProducts_Database["DisableProducts"]
+            DisableProducts_Database.close()
+
+        else:
+            DisableProducts_Database["DisableProducts"] = DisabledProducts_Dict
+            DisableProducts_Database.close()
+
     except IOError:
         print("Unable to Read File")
 
     except Exception as e:
         print(f"An unknown error has occurred,{e}")
+
     print("Market Database")
     print(Items_Dict)
+    print("Disabled Products")
+    print(DisabledProducts_Dict)
+
 
     return render_template('market.html', items=Items_Dict, wish_items=Wish_Dict, purchase_form=purchase_form,
-                           event_items=event_dict)
+                           event_items=event_dict, search=search, DisabledProducts=DisabledProducts_Dict)
+
+
+@app.route('/image/<int:id>')
+def get_img(id):
+    img = Img.query.filter_by(id=id).first()
+    if not img:
+        return 'Img Not Found!', 404
+
+    return Response(img.img, mimetype=img.mimetype)
 
 
 @app.route('/shopping_cart', methods=['GET', 'POST'])
@@ -780,9 +806,96 @@ def Edit_Shopping_Cart_Item():
                         LogsCounter.close()
 
                     else:
+
                         flash(f"{cart_item.get_name()} does not have enough in stock", category='danger')
                 else:
-                    flash(f"{cart_item.get_name()} is out of stock", category='danger')
+                    if Edit_Cart_Form.quantity.data < cart_item.get_qty_purchased():
+                        total = cart_item.get_price() * Edit_Cart_Form.quantity.data
+                        item_quantity = Items_Dict[str(request.form.get('uuid2'))].get_quantity()
+                        cart_item_quantity = Cart_Dict[str(request.form.get('uuid'))].get_qty_purchased()
+                        print(cart_item_quantity)
+                        if cart_item_quantity < Edit_Cart_Form.quantity.data:
+                            # Minus Quantity of Item
+                            new_item_quantity = item_quantity - (Edit_Cart_Form.quantity.data - cart_item_quantity)
+                            print('minus')
+                            print(new_item_quantity)
+                        else:
+                            # Adds Quantity of Item
+                            new_item_quantity = item_quantity + (cart_item_quantity - Edit_Cart_Form.quantity.data)
+                            print('add')
+                            print(new_item_quantity)
+                        print(new_item_quantity)
+                        Items_Dict[str(request.form.get('uuid2'))].set_quantity(new_item_quantity)
+                        Products_dict[str(request.form.get('uuid2'))].set_quantity(new_item_quantity)
+                        Item_Database['ItemInfo'] = Items_Dict
+                        products_database[str(request.form.get('uuid3'))] = Products_dict
+                        # Set New Quantity Purchased Of Item Added to Cart
+                        cart_item.set_qty_purchased(Edit_Cart_Form.quantity.data)
+                        cart_item.set_total_cost(total)
+                        print("Cart items")
+                        print(Cart_Dict)
+                        print(Shopping_Cart_Database[str(current_user.id)])
+                        Shopping_Cart_Database[str(current_user.id)] = Cart_Dict
+                        flash(f"{cart_item.get_name()} Quantity Changed Successfully", category='success')
+                        Item_Database.close()
+                        Shopping_Cart_Database.close()
+
+                        # Tracking Log Section
+                        log_count += 1
+                        log = Logs(
+                            id=str(log_count),
+                            log_description=f'{cart_item.get_name()} Quantity was changed to {Edit_Cart_Form.quantity.data}',
+                            date_recorded=datetime.now().strftime("%d/%m/%y"),
+                            time_recorded=datetime.now().strftime("%I:%M:%S %p")
+                        )
+
+                        logs_dict[str(log_count)] = log
+                        # Logs Database
+                        LogsDatabase[str(current_user.id)] = logs_dict
+                        # Counters
+                        LogsCounter[str(current_user.id)] = log_count
+                        LogsDatabase.close()
+                        LogsCounter.close()
+                    else:
+                        total = cart_item.get_price() * Edit_Cart_Form.quantity.data
+                        item_quantity = Items_Dict[str(request.form.get('uuid2'))].get_quantity()
+                        cart_item_quantity = Cart_Dict[str(request.form.get('uuid'))].get_qty_purchased()
+                        if (Edit_Cart_Form.quantity.data - cart_item.get_qty_purchased()) <= item_quantity:
+                            new_item_quantity = item_quantity + (cart_item_quantity - Edit_Cart_Form.quantity.data)
+                            Items_Dict[str(request.form.get('uuid2'))].set_quantity(new_item_quantity)
+                            Products_dict[str(request.form.get('uuid2'))].set_quantity(new_item_quantity)
+                            Item_Database['ItemInfo'] = Items_Dict
+                            products_database[str(request.form.get('uuid3'))] = Products_dict
+                            # Set New Quantity Purchased Of Item Added to Cart
+                            cart_item.set_qty_purchased(Edit_Cart_Form.quantity.data)
+                            cart_item.set_total_cost(total)
+                            print("Cart items")
+                            print(Cart_Dict)
+                            print(Shopping_Cart_Database[str(current_user.id)])
+                            Shopping_Cart_Database[str(current_user.id)] = Cart_Dict
+                            flash(f"{cart_item.get_name()} Quantity Changed Successfully", category='success')
+                            Item_Database.close()
+                            Shopping_Cart_Database.close()
+
+                            # Tracking Log Section
+                            log_count += 1
+                            log = Logs(
+                                id=str(log_count),
+                                log_description=f'{cart_item.get_name()} Quantity was changed to {Edit_Cart_Form.quantity.data}',
+                                date_recorded=datetime.now().strftime("%d/%m/%y"),
+                                time_recorded=datetime.now().strftime("%I:%M:%S %p")
+                            )
+
+                            logs_dict[str(log_count)] = log
+                            # Logs Database
+                            LogsDatabase[str(current_user.id)] = logs_dict
+                            # Counters
+                            LogsCounter[str(current_user.id)] = log_count
+                            LogsDatabase.close()
+                            LogsCounter.close()
+
+                        else:
+                            flash(f"{cart_item.get_name()} is out of stock", category='danger')
             else:
                 flash(f"Please Enter a Valid Quantity", category='danger')
     return redirect(url_for('Edit_Shopping_Cart'))
@@ -970,7 +1083,7 @@ def Receipt():
         return qrcode.make('Receipt:\n{}\nTotal price:${}'.format('\n'.join(
             [i.get_name() + ',Qty: ' + str(i.get_qty_purchased()) + ',Cost: $' + str(i.get_total_cost()) for i in
              args]),
-                                                                  sum([i.get_total_cost() for i in args])))
+            sum([i.get_total_cost() for i in args])))
 
     # args are items objects ,the * means accept all args yes, you can put as many arguments as you want.
     # Also creates a QR code
@@ -1021,12 +1134,19 @@ def Receipt():
 def Inventory_Management():
     Restock_Form = Restock_Item_Form()
     Products = {}
+    DisabledProducts_Dict = {}
     try:
+        DisableProducts_Database = shelve.open('website/databases/disabled_products/disable_products.db', 'c')
         products_database = shelve.open('website/databases/products/products.db', 'c')
         if str(current_user.id) in products_database:
             Products = products_database[str(current_user.id)]
         else:
             products_database[str(current_user.id)] = Products
+
+        if "DisableProducts" in DisableProducts_Database:
+            DisabledProducts_Dict = DisableProducts_Database["DisableProducts"]
+        else:
+            DisableProducts_Database["DisableProducts"] = DisabledProducts_Dict
 
     except IOError:
         print("Unable to Read File")
@@ -1034,7 +1154,8 @@ def Inventory_Management():
     except Exception as e:
         print(f"An unknown error has occurred,{e}")
 
-    return render_template('InventoryManagement.html', products=Products, restock_form=Restock_Form)
+    return render_template('InventoryManagement.html', products=Products, restock_form=Restock_Form,
+                           DisabledProducts=DisabledProducts_Dict)
 
 
 @app.route('/RestockItem', methods=['GET', 'POST'])
@@ -1075,6 +1196,82 @@ def Restock_Item():
 
             Item_Database.close()
             products_database.close()
+    return redirect(url_for('Inventory_Management'))
+
+
+@app.route('/DisableProduct', methods=['GET', 'POST'])
+@login_required
+def Disable_Product():
+    DisabledProducts_Dict = {}
+    Items_Dict = {}
+
+    try:
+        DisableProducts_Database = shelve.open('website/databases/disabled_products/disable_products.db', 'c')
+        Item_Database = shelve.open('website/databases/items/items.db', 'c')
+        if "DisableProducts" in DisableProducts_Database:
+            DisabledProducts_Dict = DisableProducts_Database["DisableProducts"]
+        else:
+            DisableProducts_Database["DisableProducts"] = DisabledProducts_Dict
+
+        if 'ItemInfo' in Item_Database:
+            Items_Dict = Item_Database['ItemInfo']
+
+        else:
+            Item_Database['ItemInfo'] = Items_Dict
+
+    except IOError:
+        print("Unable to Read File")
+
+    except Exception as e:
+        print(f"An unknown error has occurred,{e}")
+
+    else:
+        if request.method == 'POST':
+            if str(request.form.get('uuid')) not in DisabledProducts_Dict:
+                disabled_item = Items_Dict[str(request.form.get('uuid'))]
+                DisabledProducts_Dict[disabled_item.get_id()] = disabled_item
+                DisableProducts_Database["DisableProducts"] = DisabledProducts_Dict
+                flash(f"{disabled_item.get_name()} has been disabled!", category='danger')
+                DisableProducts_Database.close()
+                Item_Database.close()
+
+    return redirect(url_for('Inventory_Management'))
+
+
+@app.route('/EnableProduct', methods=['GET', 'POST'])
+@login_required
+def Enable_Product():
+    DisabledProducts_Dict = {}
+    Items_Dict = {}
+
+    try:
+        DisableProducts_Database = shelve.open('website/databases/disabled_products/disable_products.db', 'c')
+        Item_Database = shelve.open('website/databases/items/items.db', 'c')
+        if "DisableProducts" in DisableProducts_Database:
+            DisabledProducts_Dict = DisableProducts_Database["DisableProducts"]
+        else:
+            DisableProducts_Database["DisableProducts"] = DisabledProducts_Dict
+
+        if 'ItemInfo' in Item_Database:
+            Items_Dict = Item_Database['ItemInfo']
+
+        else:
+            Item_Database['ItemInfo'] = Items_Dict
+
+    except IOError:
+        print("Unable to Read File")
+
+    except Exception as e:
+        print(f"An unknown error has occurred,{e}")
+
+    else:
+        if request.method == 'POST':
+            disabled_item = Items_Dict[str(request.form.get('uuid'))]
+            del DisabledProducts_Dict[disabled_item.get_id()]
+            DisableProducts_Database["DisableProducts"] = DisabledProducts_Dict
+            flash(f'{disabled_item.get_name()} has been enabled!', category='success')
+            DisableProducts_Database.close()
+
     return redirect(url_for('Inventory_Management'))
 
 
@@ -1263,6 +1460,7 @@ def Add_Item():
     your_products_dict = {}
     Items_Dict = {}
     unique_id = uuid4()
+
     try:
         Item_Database = shelve.open('website/databases/items/items.db', 'c')
         Your_Products_Database = shelve.open('website/databases/products/products.db', 'c')
@@ -1283,18 +1481,30 @@ def Add_Item():
 
     else:
         if add_item_form.validate_on_submit() and request.method == 'POST':
+            pic = request.files['pic']
+
+            if not pic:
+                flash("Please Insert an Image before adding a product.", category='danger')
+                return redirect(url_for('Add_Item'))
+
+            filename = secure_filename(pic.filename)
+            mimetype = pic.mimetype
             while True:
                 unique_id = uuid4()
                 if str(unique_id) not in Items_Dict:
+                    img = Img(img=pic.read(), mimetype=mimetype, name=filename)
+                    db.session.add(img)
+                    db.session.commit()
                     item = Item(id=str(unique_id),
                                 name=add_item_form.name.data,
                                 quantity=add_item_form.quantity.data,
                                 description=add_item_form.description.data,
                                 price=add_item_form.price.data,
                                 owner=current_user.username,
-                                owner_id=current_user.id
-
+                                owner_id=current_user.id,
+                                image=img.id
                                 )
+
                     Items_Dict[str(unique_id)] = item
                     your_products_dict[str(unique_id)] = item
                     Item_Database['ItemInfo'] = Items_Dict
@@ -1307,7 +1517,14 @@ def Add_Item():
                 else:
                     continue
 
-    return render_template('AddItem.html', add_item_form=add_item_form)
+    return render_template('AddItem.html', add_item_form=add_item_form), 200
+
+
+@app.route('/UpdateItemForm', methods=['POST', 'GET'])
+@login_required
+def Update_Item_Form():
+    add_item_form = Add_Item_Form()
+    return render_template('UpdateItem.html', add_item_form=add_item_form)
 
 
 @app.route('/PurchaseItem', methods=['POST', 'GET'])
@@ -2018,6 +2235,7 @@ def register_page():
         db.session.commit()
         login_user(user_to_create)
         flash(f"Success! You are logged in as: {user_to_create.username}", category='success')
+
         return redirect(url_for('home_page'))
     if form.errors != {}:  # If there are not errors from the validations
         errors = []
@@ -2391,7 +2609,7 @@ def create_supplier():
                     # if company data in database,
                     supplier_dict = supplier_db['Suppliers']
                 except Exception as e:
-                    flash(f"An unknown error, \"{e}\" has occured!")
+                    print(f"An unknown error, \"{e}\" has occured!")
 
                 if "ID" in supplier_id_db:
                     id = supplier_id_db["ID"]
@@ -2524,9 +2742,9 @@ def user_management_update(id):
         userID.username = form.username.data
         userID.email_address = form.email_address.data
         db.session.commit()
-        flash("User's Particulars updated to database successfully!", category='success')
+        print("User's Particulars updated to database successfully!")
     else:
-        flash("Some error occurred!")
+        print("Some error occurred!")
 
     if request.method == 'GET':
         return render_template('Update_User_Management.html', form=form, user=userID)
@@ -2618,16 +2836,67 @@ def deleteEvents():
     return redirect(url_for("Events_Page"))
 
 
+@app.route('/updateEvents', methods=["GET", "POST"])
+@login_required
+def updateEvents():
+    # update_events_form = Update_Events()
+    event_database = shelve.open('website/databases/Events/event.db', 'w')
+    event_dict = {}
+    try:
+        if "EventInfo" not in event_database:
+            event_database["EventInfo"] = event_dict
+        else:
+            event_dict = event_database["EventInfo"]
+    except KeyError:
+        flash("No such note.", category="danger")
+    except Exception as e:
+        flash(f"An Unknown Error has occurred, {e}", category="danger")
+    else:
+        current_event = event_dict[str(request.form.get('uuid'))]
+        current_event.set_title(request.form.get('title'))
+        current_event.set_description(request.form.get('description'))
+        current_event.set_updated_date(datetime.now().strftime("%d/%m/%y "))
+        current_event.set_updated_time(datetime.now().strftime("%I:%M:%S:%p"))
+        event_database["EventInfo"] = event_dict
+        flash('Event Updated', category='success')
+        event_database.close()
+    return redirect(url_for("Events_Page"))
+
+
+@app.route('/Current_Events', methods=['GET', 'POST'])
+@login_required
+def Current_Events_Page():
+    event_database = shelve.open('website/databases/Events/event.db', 'c')
+    event_dict = {}
+
+    try:
+        if "EventInfo" not in event_database:
+            event_database["EventInfo"] = event_dict
+        else:
+            event_dict = event_database["EventInfo"]
+    except IOError:
+        flash("An Error Has Occurred Trying to Read The Database", category="error")
+    except Exception as e:
+        flash(f"An Unknown Error has occurred, {e}")
+
+    return render_template('currentevents.html', events=event_dict)
+
+
 # Daniel
 @app.route('/tickets', methods=['GET', 'POST'])
 @login_required
 def ticket_page():
     ticket_form = Ticket_Form()
-    ticket_database = shelve.open('website/databases/Ticket/ticket.db', 'c')
-    ticket_database_uniqueID = shelve.open('website/databases/Ticket/ticket_uniqueID.db', 'c')
     tickets = {}
     count = 0
+    ticket_history = {}
+    # ticket_history_count = 0
     try:
+        ticket_database = shelve.open('website/databases/Ticket/ticket.db', 'c')
+        ticket_database_uniqueID = shelve.open('website/databases/Ticket/ticket_uniqueID.db', 'c')
+        ticket_history_database = shelve.open('website/databases/Ticket_History/ticket_history.db', 'c')
+        # ticket_history_database_uniqueID = shelve.open('website/databases/Ticket_History/ticket_history_uniqueID.db',
+        #                                                'c')
         if 'TicketInfo' in ticket_database:
             tickets = ticket_database['TicketInfo']
         else:
@@ -2638,12 +2907,23 @@ def ticket_page():
         else:
             ticket_database_uniqueID['ID'] = count
 
+        if str(current_user.id) in ticket_history_database:
+            ticket_history = ticket_history_database[str(current_user.id)]
+        else:
+            ticket_history_database[str(current_user.id)] = ticket_history
+
+        # if str(current_user.id) in ticket_history_database_uniqueID:
+        #     ticket_history_count = ticket_history_database_uniqueID[str(current_user.id)]
+        # else:
+        #     ticket_history_database_uniqueID[str(current_user.id)] = ticket_history_count
+
     except IOError:
-        print("An Error Has Occurred Trying to Read The Database", category="danger")
+        print("An Error Has Occurred Trying to Read The Database")
     except Exception as e:
         print(f"An Unknown Error has occurred, {e}")
     if request.method == 'POST':
         count += 1
+        # ticket_history_count+=1
         ticket = Tickets(
             id=str(count),
             description=ticket_form.description.data,
@@ -2654,13 +2934,19 @@ def ticket_page():
             owner_id=current_user.id,
             pending='Pending'
         )
-
+        # Main Ticket Database section(for admins)
         tickets[str(count)] = ticket
-        print(tickets)
         ticket_database['TicketInfo'] = tickets
         ticket_database_uniqueID['ID'] = count
         ticket_database.close()
         ticket_database_uniqueID.close()
+        # Ticket History Portion
+        ticket_history[str(count)] = ticket
+        ticket_history_database[str(current_user.id)] = ticket_history
+        # ticket_history_database_uniqueID[str(current_user.id)] = ticket_history_count
+        ticket_history_database.close()
+        # ticket_history_database_uniqueID.close()
+
         flash("Ticket Sent Successfully", category='success')
 
     return render_template('ticket.html', form=ticket_form)
@@ -2691,6 +2977,78 @@ def ticket_requests_page():
         print(f"An Unknown Error has occurred, {e}")
 
     return render_template('ticketRequest.html', tickets=tickets, ticker_response=ticket_reply_form)
+
+
+@app.route('/ticket_history', methods=['GET', 'POST'])
+@login_required
+def ticket_history():
+    count = 0
+    ticket_history = {}
+    try:
+        ticket_history_database = shelve.open('website/databases/Ticket_History/ticket_history.db', 'c')
+        # ticket_history_database_uniqueID = shelve.open('website/databases/Ticket_History/ticket_history_uniqueID.db',
+        #                                                'c')
+        ticket_database_uniqueID = shelve.open('website/databases/Ticket/ticket_uniqueID.db', 'c')
+        if str(current_user.id) in ticket_history_database:
+            ticket_history = ticket_history_database[str(current_user.id)]
+        else:
+            ticket_history_database[str(current_user.id)] = ticket_history
+
+        if 'ID' in ticket_database_uniqueID:
+            count = ticket_database_uniqueID['ID']
+        else:
+            ticket_database_uniqueID['ID'] = count
+
+        # if str(current_user.id) in ticket_history_database_uniqueID:
+        #     ticket_history_count = ticket_history_database_uniqueID[str(current_user.id)]
+        # else:
+        #     ticket_history_database_uniqueID[str(current_user.id)] = ticket_history_count
+
+    except IOError:
+        print("An Error Has Occurred Trying to Read The Database")
+    except Exception as e:
+        print(f"An Unknown Error has occurred, {e}")
+
+    return render_template('TicketHistory.html', tickets=ticket_history)
+
+
+@app.route('/delete_ticket_history/<int:id>', methods=['GET', 'POST'])
+@login_required
+def delete_ticket_history(id):
+    count = 0
+    ticket_history = {}
+    try:
+        ticket_history_database = shelve.open('website/databases/Ticket_History/ticket_history.db', 'c')
+        # ticket_history_database_uniqueID = shelve.open('website/databases/Ticket_History/ticket_history_uniqueID.db',
+        #                                                'c')
+        ticket_database_uniqueID = shelve.open('website/databases/Ticket/ticket_uniqueID.db', 'c')
+        if str(current_user.id) in ticket_history_database:
+            ticket_history = ticket_history_database[str(current_user.id)]
+        else:
+            ticket_history_database[str(current_user.id)] = ticket_history
+
+        if 'ID' in ticket_database_uniqueID:
+            count = ticket_database_uniqueID['ID']
+        else:
+            ticket_database_uniqueID['ID'] = count
+
+        # if str(current_user.id) in ticket_history_database_uniqueID:
+        #     ticket_history_count = ticket_history_database_uniqueID[str(current_user.id)]
+        # else:
+        #     ticket_history_database_uniqueID[str(current_user.id)] = ticket_history_count
+
+    except IOError:
+        print("An Error Has Occurred Trying to Read The Database")
+    except Exception as e:
+        print(f"An Unknown Error has occurred, {e}")
+
+    else:
+        del ticket_history[str(id)]
+        ticket_history_database[str(current_user.id)] = ticket_history
+        flash('Ticket Deleted', category='success')
+        ticket_history_database.close()
+        ticket_database_uniqueID.close()
+    return redirect(url_for("ticket_history"))
 
 
 @app.route('/Booking', methods=['GET', 'POST'])
@@ -2724,8 +3082,6 @@ def Booking_Page():
                 description=form.reason.data,
                 time_added=datetime.now().strftime("%d/%m/%y %I:%M:%S:%p"),
                 time_updated=datetime.now().strftime("%d/%m/%y %I:%M:%S:%p"),
-                phone=form.number.data,
-                nric=form.nric.data,
                 date=form.date.data,
                 timeslot=form.time.data
             )
@@ -2781,11 +3137,26 @@ def ticket_reply(id):
     count = 0
     response_count = 0
     userID = User.query.filter_by(id=id).first()
+    ticket_history = {}
+    # ticket_history_count = 0
     try:
         ticket_database = shelve.open('website/databases/Ticket/ticket.db', 'w')
         ticket_database_uniqueID = shelve.open('website/databases/Ticket/ticket_uniqueID.db', 'w')
         ticket_response_database = shelve.open('website/databases/Messages/messages.db', 'c')
         ticket_response_uniqueID = shelve.open('website/databases/Messages/messages_uniqueID', 'c')
+        ticket_history_database = shelve.open('website/databases/Ticket_History/ticket_history.db', 'c')
+        # ticket_history_database_uniqueID = shelve.open('website/databases/Ticket_History/ticket_history_uniqueID.db',
+        #                                                'c')
+        # Ticket History(For owner of ticket) database
+        if str(id) in ticket_history_database:
+            ticket_history = ticket_history_database[str(id)]
+        else:
+            ticket_history_database[str(id)] = ticket_history
+
+        # if str(id) in ticket_history_database_uniqueID:
+        #     ticket_history_count = ticket_history_database_uniqueID[str(id)]
+        # else:
+        #     ticket_history_database_uniqueID[str(current_user.id)] = ticket_history_count
 
         # Ticket Response Database
         if str(id) in ticket_response_database:
@@ -2828,6 +3199,9 @@ def ticket_reply(id):
                     recipient=userID.username
                 )
                 tickets[str(request.form.get('uuid'))].set_pending_status(ticket_reply_form.issue_status.data)
+                if str(request.form.get('uuid')) in ticket_history:
+                    ticket_history[str(request.form.get('uuid'))].set_pending_status(
+                        ticket_reply_form.issue_status.data)
                 tickets_response_dict[str(response_count)] = ticket_response
 
                 ticket_response_database[str(id)] = tickets_response_dict
@@ -2839,6 +3213,9 @@ def ticket_reply(id):
                 ticket_database['TicketInfo'] = tickets
                 ticket_database.close()
                 ticket_database_uniqueID.close()
+                # Ticket History Database
+                ticket_history_database[str(id)] = ticket_history
+                ticket_history_database.close()
                 flash(f"Ticket Response Sent Successfully to {userID.username}", category='success')
                 userID.messages = len(tickets_response_dict)
             else:
@@ -2969,6 +3346,7 @@ def Feedback_Page():
 @login_required
 def Feedbacks():
     feedback_dict = {}
+    star_sum = 0
     try:
         feedback_database = shelve.open('website/databases/Feedbacks/Feedback.db', 'r')
         # feedback_database_uniqueID = shelve.open('website/databases/Feedbacks/Feedback_uniqueID.db', 'r')
@@ -2989,8 +3367,15 @@ def Feedbacks():
         print("An Error Has Occurred Trying to Read The Database")
     except Exception as e:
         print(f"An Unknown Error has occurred, {e}")
+    for i in feedback_dict:
+        star_sum += feedback_dict[i].get_rating()
 
-    return render_template('feedback.html', feedback_dict=feedback_dict)
+    if star_sum > 0:
+        star_average = round(star_sum / len(feedback_dict))
+    else:
+        star_average = 0
+
+    return render_template('feedback.html', feedback_dict=feedback_dict, star_average=star_average)
 
 
 @app.route('/delete_feedback', methods=['GET', 'POST'])
