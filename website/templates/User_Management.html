@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+{% block title %}Transfer Funds{% endblock %}
+    <!-- Custom styles for this page -->
+    <link href="../static/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+{% block content %}
+<!-- Begin Page Content -->
+<div class="container-fluid">
+
+    <!-- Page Heading -->
+    <h1 class="h1 mb-2 text-gray-800">User Management</h1>
+    <p class="mb-4">Welcome Admin! Please search for a user in the table to start transferring funds </p>
+
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Registered Users Database</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>User ID</th>
+                            <th>Username</th>
+                            <th>Email Address</th>
+                            <th>Account Status</th>
+                            <th>Update</th>
+                            <th>Disable</th>
+                        </tr>
+                    </thead>
+
+
+                    <tbody>
+                    {% for user in users %}
+                    {% if user.id != current_user.id%}
+                        <tr>
+                            <td>{{user.id}}</td>
+                            <td>{{user.username}}</td>
+                            <td>{{user.email_address}}</td>
+                            <td>{{user.status}}</td>
+                            <td>
+                                <form action="{{url_for('user_management_update', id=user.id, user=user)}}" method="GET">
+                                    <input type="submit" value="Update User" class="btn btn-outline btn-info">
+                                </form>
+                            </td>
+                            <td>
+<!--                            <button class="btn btn-outline btn-info" data-toggle="modal" data-target="#Modal-MoreInfo&#45;&#45;{{user.id}}">Update User</button>-->
+                            <!--data-target go check the id tag in 'items_modals.html'
+                            near the more Info comment section it targets that to give
+                            each specific item its specific name in title and description -->
+                            {% if user.status == 'Enabled' %}
+                                <form action="{{url_for('user_management_disable', id=user.id)}}" method="POST">
+                                    <input type="submit" value="Disable Account" class="btn btn-outline btn-danger">
+                                </form>
+                            {% elif user.status == 'Disabled' %}
+                                <form action="{{url_for('user_management_enable', id=user.id)}}" method="POST">
+                                    <input type="submit" value="Enable Account" class="btn btn-outline btn-success">
+                                </form>
+                            {% endif %}
+                            </td>
+
+                        </tr>
+                    {% endif %}
+                    {% endfor %}
+                    </tbody>
+
+                </table>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- NOTE TO MAKE THE PROGRAM WORK YOU NEED TO DO THIS PART -->
+<!-- Update User Modal -->
+<!--{% for user in users %}-->
+<!--    <div class="modal fade" id="Modal-MoreInfo&#45;&#45;{{user.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">-->
+<!--          <div class="modal-dialog modal-dialog-centered" role="document">-->
+<!--            <div class="modal-content">-->
+<!--              <div class="modal-header">-->
+<!--                <h5 class="modal-title" id="exampleModalLongTitle">Updating <span style="font-style: bold;">{{user.username}}</span>...</h5>-->
+<!--                <button type="button" class="close" data-dismiss="modal" aria-label="Close">-->
+<!--                  <span aria-hidden="true">&times;</span>-->
+<!--                </button>-->
+<!--              </div>-->
+<!--              <div class="modal-body">-->
+<!--                &lt;!&ndash; CONTENT &ndash;&gt;-->
+
+
+
+<!--              </div>-->
+<!--              <div class="modal-footer">-->
+<!--                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>-->
+<!--                <button type="button" class="btn btn-primary">Save changes</button>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--{% endfor %}-->
+<!--User Update Modal-->
+<!--{% for user in users %}-->
+<!--<div class="modal fade" id="Modal-MoreInfo&#45;&#45;{{user.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"-->
+<!--        aria-hidden="true">-->
+<!--        <div class="modal-dialog" role="document">-->
+<!--            <div class="modal-content">-->
+<!--                <div class="modal-header">-->
+<!--                    <h5 class="modal-title" id="exampleModalLabel">Transfer Funds Transaction</h5>-->
+<!--                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">-->
+<!--                        <span aria-hidden="true">×</span>-->
+<!--                    </button>-->
+<!--                </div>-->
+<!--                <div class="modal-body">Transfer Funds to {{user.username}}?-->
+<!--                </div>-->
+<!--                <div class="modal-footer">-->
+<!--                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>-->
+<!--                      <form action="{{url_for('user_management_update', id=user.id )}}" method="POST">-->
+<!--                        <input type="submit" value="Transfer" class="btn btn-primary">-->
+<!--                      </form>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--{% endfor %}-->
+<!-- /.container-fluid -->
+{% endblock %}

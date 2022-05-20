@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="../static/css/form.css">
+    <link rel="stylesheet" href="../static/css/Landingbase.css">
+</head>
+<body>
+
+<div class="wrapper fadeInDown">
+  <div id="formContent">
+    <!-- Tabs Titles -->
+
+    <!-- Info Text -->
+    <div class="fadeIn first">
+      <p id="Info_text" style="font-family: monospace;">Login to begin your banking journey!</p>
+    </div>
+
+    <!-- Login Form -->
+    <form class="user" method="POST">
+        {{ form.hidden_tag() }}
+        <!--This flask built in tag protects our site
+        from Cross Site Request Forgery (CSRF) Attack -->
+        <!--this attack basically may attack or steal
+        your database -->
+        <div class="form-group fadeIn second">
+            <!--User Name-->
+            {{ form.username.label() }}
+            {{ form.username(class="form-control form-control-user", placeholder="User Name") }}
+        </div>
+
+
+        <div class="form-group fadeIn third">
+        <!--Password-->
+            {{ form.password.label() }}
+            {{ form.password(class="form-control form-control-user", placeholder="Password") }}
+        </div>
+
+        <div class="fadeIn fourth">
+        {{ form.submit(class="btn btn-primary btn-user btn-block") }}
+        </div>
+        <hr>
+    </form>
+
+    <!-- Remind Password -->
+    <div class="text-center underlineHover fadeIn fifth">
+        <a class="small" href="{{ url_for('forgot_password_page') }}">Forgot Password?</a>
+    </div>
+    <div class="text-center underlineHover fadeIn sixth">
+        <a class="small" href="{{ url_for('register_page') }}">Create an Account!</a>
+    </div>
+
+
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,335 @@
+
+{% extends "base.html" %}
+{% block title %}Market Page{% endblock %}
+
+{% block content %}
+
+
+
+<!-- ========================= SECTION INTRO ========================= -->
+
+<section class="section-intro padding-y">
+
+<div class="container">
+<!--    <form>-->
+
+<!--        <div class="input-group">-->
+<!--            <input type="text" class="form-control bg-light border-1 small" placeholder="Search for..."-->
+<!--                aria-label="Search" aria-describedby="basic-addon2">-->
+<!--            <div class="input-group-append">-->
+<!--                <button class="btn btn-primary" type="button">-->
+<!--                    <i class="fas fa-search fa-sm"></i>-->
+<!--                </button>-->
+<!--            </div>-->
+<!--        </div>-->
+
+<!--    </form>-->
+    <br>
+<div id="carousel1_indicator" class="slider-home-banner carousel slide" data-ride="carousel">
+  <ol class="carousel-indicators">
+    <li data-target="#carousel1_indicator" data-slide-to="0" class="active"></li>
+    <li data-target="#carousel1_indicator" data-slide-to="1"></li>
+      <li data-target="#carousel1_indicator" data-slide-to="2"></li>
+  </ol>
+  <div class="carousel-inner">
+    <div class="carousel-item active">
+      <img src="../static/img/slide-lg-1.jpg" alt="First slide">
+    </div>
+    <div class="carousel-item">
+      <img src="../static/img/slide-lg-2.jpg" alt="Second slide">
+    </div>
+      <div class="carousel-item">
+      <img src="../static/img/slide-lg-3.jpg" alt="Third slide">
+    </div>
+  </div>
+       <a class="carousel-control-prev" href="#carousel1_indicator" role="button" data-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="sr-only">Previous</span>
+  </a>
+  <a class="carousel-control-next" href="#carousel1_indicator" role="button" data-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="sr-only">Next</span>
+  </a>
+</div>
+
+
+</section>
+
+
+
+
+<!-- ========================= SECTION INTRO END// ========================= -->
+
+<br>
+<!-- ========================= SECTION SPECIAL ========================= -->
+<div class="container">
+<article class="card card-body">
+
+
+<div class="row">
+	<div class="col-md-4">
+		<figure class="item-feature">
+			<span class="text-primary"><i class="fa fa-2x fa-truck"></i></span>
+			<figcaption class="pt-3">
+				<h5 class="title">Fast delivery</h5>
+				<p>We Offer 1 or 2 day Shipping, at Swiss we ensure that you will always receive your order
+                    on time.</p>
+			</figcaption>
+		</figure> <!-- iconbox // -->
+	</div><!-- col // -->
+	<div class="col-md-4">
+		<figure  class="item-feature">
+			<span class="text-primary"><i class="fa fa-2x fa-landmark"></i></span>
+			<figcaption class="pt-3">
+				<h5 class="title">Creative Strategy</h5>
+				<p>Here at Swiss we like to connect with our customers and understand their pain points.
+                    We are open to feedback and will try our best to compensate for any issues faced by our
+                    customers.
+				 </p>
+			</figcaption>
+		</figure> <!-- iconbox // -->
+	</div><!-- col // -->
+    <div class="col-md-4">
+		<figure  class="item-feature">
+			<span class="text-primary"><i class="fa fa-2x fa-lock"></i></span>
+			<figcaption class="pt-3">
+				<h5 class="title">High secured </h5>
+				<p>Our Security Is Top of the Line and we will ensure that your package will arrive
+                    to you safely.
+				 </p>
+			</figcaption>
+		</figure> <!-- iconbox // -->
+	</div> <!-- col // -->
+</div>
+</article>
+<br>
+
+<!-- ========================= SECTION CONTENT END// ========================= -->
+
+<!-- ========================= WEBSITE MAIN // ========================= -->
+    {% if items|length != 0 %}
+    <div class="container px-4 px-lg-5 mt-5">
+        <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+            {% for i in items %}
+            {% if search != None %}
+            {% if search.upper() in items[i].get_name().upper() %}
+
+            <div class="col mb-5">
+                <div class="card h-100" style="min-width: 200px; margin: 2px;">
+                    <!-- Product image-->
+                    <img class="card-img-top" style="height:200px" src="{{url_for('get_img' , id = items[i].get_image())}}" alt="Item Image" />
+                    <!-- Product details-->
+                    <div class="card-body p-4" style="height: 185px; text-overflow: ellipsis; flex: none;">
+                        <div class="text-center">
+                            <!-- Product name-->
+                            <h5 class="fw-bolder" style="font-weight: bolder; font-size:medium; min-height: 48px; text-decoration: underline; font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif">{{items[i].get_name()}}</h5>
+                            <!-- Product price-->
+                            ${{ "{:.2f}".format(items[i].get_price()) }}
+                            <!-- Product Quantity -->
+                            <!-- <br>
+                            Quantity: {{items[i].get_quantity()}} -->
+                            <br>
+                            Quantity: {{items[i].get_quantity()}}
+
+                        </div>
+                    </div>
+                    <!-- Product actions-->
+                    <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                        <div class="text-center"><button class="btn btn-outline-dark" data-toggle="modal" data-target="#Modal-MoreInfo--{{items[i].get_id()}}">More Info</button></div>
+                        <div class="text-center" style="margin-top: 15px;">
+                        {% if items[i].get_owner() == current_user.username %}
+                            <td><button class="btn btn-outline btn-warning">Your Products</button></td>
+                            {% elif items[i].get_id() in DisabledProducts%}
+                            <td><button class="btn btn-outline btn-danger" disabled>Item Disabled</button></td>
+                            {% else %}
+							<td>
+                                <button class="btn btn-outline mt-auto btn-success" data-toggle="modal" data-target="#Modal-Purchase--{{items[i].get_id()}}" {% if items[i].get_quantity() == 0 %} disabled {% endif %}>{% if items[i].get_quantity() == 0 %} Out of stock {% else %} Add to cart {% endif %}</button>
+                                <!-- Wishlist -->
+                                {% if items[i].get_owner() != current_user.username %}
+                                {% if items[i].get_id() not in wish_items %}
+                                    <form action="{{ url_for('wish') }}" method="POST" style="margin-top: 15px;">
+                                        <input id="uuid" name="uuid" type="hidden" value="{{items[i].get_id()}}">
+                                        <button class="btn btn-outline btn-danger" type="submit" ><i class="far fa-heart"></i></button>
+                                    </form>
+                                {% else %}
+                                    <form action="{{ url_for('delete_wish') }}" method="POST" style="margin-top: 15px;">
+                                        <input id="uuid" name="uuid" type="hidden" value="{{items[i].get_id()}}">
+                                        <button class="btn btn-outline btn-danger" type="submit" ><i class="fas fa-heart"></i></button>
+                                    </form>
+                                {% endif %}
+                                {% else %}
+                                <button class="btn btn-outline btn-primary" type="submit" >Your Item</button>
+                                {% endif %}
+                            </td>
+
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            {% elif search == None %}
+            <div class="col mb-5">
+                <div class="card h-100" style="min-width: 200px; margin: 2px;">
+                    <!-- Product image-->
+                    <img class="card-img-top" style="height:200px" src="{{url_for('get_img' , id = items[i].get_image())}}" alt="Item Image" />
+                    <!-- Product details-->
+                    <div class="card-body p-4" style="height: 185px; text-overflow: ellipsis; flex: none;">
+                        <div class="text-center">
+                            <!-- Product name-->
+                            <h5 class="fw-bolder" style="font-weight: bolder; font-size:medium; min-height: 48px; text-decoration: underline; font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif">{{items[i].get_name()}}</h5>
+                            <!-- Product price-->
+                            ${{ "{:.2f}".format(items[i].get_price()) }}
+                            <!-- Product Quantity -->
+                            <!-- <br>
+                            Quantity: {{items[i].get_quantity()}} -->
+                            <br>
+                            Quantity: {{items[i].get_quantity()}}
+
+                        </div>
+                    </div>
+                    <!-- Product actions-->
+                    <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                        <div class="text-center"><button class="btn btn-outline-dark" data-toggle="modal" data-target="#Modal-MoreInfo--{{items[i].get_id()}}">More Info</button></div>
+                        <div class="text-center" style="margin-top: 15px;">
+                        {% if items[i].get_owner() == current_user.username %}
+                            <td><button class="btn btn-outline btn-warning">Your Products</button></td>
+                            {% elif items[i].get_id() in DisabledProducts%}
+                            <td><button class="btn btn-outline btn-danger" disabled>Item Disabled</button></td>
+                            {% else %}
+							<td>
+                                <button class="btn btn-outline mt-auto btn-success" data-toggle="modal" data-target="#Modal-Purchase--{{items[i].get_id()}}" {% if items[i].get_quantity() == 0 %} disabled {% endif %}>{% if items[i].get_quantity() == 0 %} Out of stock {% else %} Add to cart {% endif %}</button>
+                                <!-- Wishlist -->
+                                {% if items[i].get_owner() != current_user.username %}
+                                {% if items[i].get_id() not in wish_items %}
+                                    <form action="{{ url_for('wish') }}" method="POST" style="margin-top: 15px;">
+                                        <input id="uuid" name="uuid" type="hidden" value="{{items[i].get_id()}}">
+                                        <button class="btn btn-outline btn-danger" type="submit" ><i class="far fa-heart"></i></button>
+                                    </form>
+                                {% else %}
+                                    <form action="{{ url_for('delete_wish') }}" method="POST" style="margin-top: 15px;">
+                                        <input id="uuid" name="uuid" type="hidden" value="{{items[i].get_id()}}">
+                                        <button class="btn btn-outline btn-danger" type="submit" ><i class="fas fa-heart"></i></button>
+                                    </form>
+                                {% endif %}
+                                {% else %}
+                                <button class="btn btn-outline btn-primary" type="submit" >Your Item</button>
+                                {% endif %}
+                            </td>
+
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            {% endfor %}
+    </div>
+        {% endif %}
+
+
+
+        
+<!-- More Info Modal-->
+{% for i in items %}
+
+<div class="modal fade" id="Modal-MoreInfo--{{items[i].get_id()}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true" style="margin-top: 100px;">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" >
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">{{items[i].get_name()}}</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <img class="card-img-top" style="max-height:300px" src="{{url_for('get_img' , id = items[i].get_image())}}" alt="Item Image" />
+                <hr>
+                <p>Barcode: {{items[i].get_id()}}</p>
+                <p>Name: {{items[i].get_name()}}</p>
+                <p>Description: {{items[i].get_description()}}</p>
+                <p>Price: ${{ "{:.2f}".format(items[i].get_price()) }}</p>
+                <p>Items in Stock: {{items[i].get_quantity()}}</p>
+                <p>Owner: {{items[i].get_owner()}}</p>
+                </div>
+                <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+<!--  Purchase Modal  -->
+    <div class="modal fade mx-auto" id="Modal-Purchase--{{items[i].get_id()}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true" style="margin-top: 100px;">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Add {{items[i].get_name()}} to Cart?</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <form action="{{ url_for('Add_To_Cart') }}" method="POST">
+                <div class="modal-body">
+                    <img class="card-img-top" style="max-height:300px" src="{{url_for('get_img' , id = items[i].get_image())}}" alt="Item Image" />
+                    <hr>
+                    <p>Barcode: {{items[i].get_id()}}</p>
+                    <p>Name: {{items[i].get_name()}}</p>
+                    <p>Description: {{items[i].get_description()}}</p>
+                    <p>Price: ${{ "{:.2f}".format(items[i].get_price()) }}</p>
+                    <p>Items in Stock: {{items[i].get_quantity()}}</p>
+                    <p>Owner: {{items[i].get_owner()}}</p>
+                    <hr>
+
+                    {{ purchase_form.quantity.label() }}
+                    {{ purchase_form.quantity(class='form-control form-control-user', placeholder='Enter Quantity') }}
+
+                  </div>
+
+                   <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <input id="uuid" name="uuid" type="hidden" value="{{items[i].get_id()}}">
+                    <input type="hidden" name="uuid2" value="{{items[i].get_owner_id()}}">
+                    <button class="btn btn-success" type="submit">Add to Cart</button>
+
+                    </div>
+                </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+<!-- <div class="row mt-4">
+     <br>
+    <div class="container-fluid" style="margin-top: 30px;">
+        <div class="text-white bg-dark text-white shadow-lg " style="padding: 35px;">
+          <h1 class="h3 mb-2 " style=" color:white;">Our Current Events</h1>
+          <p class="mb-4">Simply Our Current Events here.</p>
+    </div>
+        <br>
+{% for i in event_items %}
+<div class="d-inline-block w-100">
+            <div class="col-12 shadow p-3 mb-5 bg-primary rounded d-inline-block w-100", style="color:white">
+
+                <h3>{{event_items[i].get_title()}}</h3>
+
+                <p style="width: 400px; word-wrap: break-word;">{{event_items[i].get_description()}}</p>
+                <br>
+                <p class=""><b>Created On: {{event_items[i].get_date_added()}} {{event_items[i].get_time_added()}}</b></p>
+                <p class=""><p><b>Last Updated On: {{event_items[i].get_update_date()}} {{event_items[i].get_updated_time()}}</b></p>
+
+            </div>
+</div>
+
+{% endfor %}
+    </div> -->
+{% endblock %}

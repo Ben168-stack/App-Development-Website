@@ -1,10 +1,37 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends "base.html" %}
+{% block title %}Current Events{% endblock %}
+
+{% block content %}
+
+
+ <div class="row mt-4">
+     <br>
+    <div class="container-fluid" style="margin-top: 30px;">
+        <div class="text-white bg-primary text-white shadow-lg " style="padding: 35px;" >
+          <h1 class="h3 mb-2 " style=" color:white;">Our Current Events</h1>
+          <p class="mb-4">Simply Our Current Events Currently Ongoing</p>
+    </div>
+        <br>
+        {% for i in events %}
+        <div class="d-inline-block w-100">
+            <div class="col-12 shadow p-3 mb-5 bg-primary rounded d-inline-block w-100", style="color:black; background-color: azure!important;">
+                <h3>{{events[i].get_title()}}</h3>
+                <p style="width: 400px; word-wrap: break-word;">{{events[i].get_description()}}</p>
+                <br>
+                <p class=""><b>Created On: {{events[i].get_date_added()}} {{events[i].get_time_added()}}</b></p>
+                <p class=""><p><b>Last Updated On: {{events[i].get_update_date()}} {{events[i].get_updated_time()}}</b></p>
+            </div>
+        </div>
+        {% endfor %}
+
+
+
+    </div>
+<br>
+<br>
+<br>
+ <!-- Button trigger modal -->
+
+ </div>
+
+{% endblock %}

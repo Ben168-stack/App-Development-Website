@@ -1,10 +1,54 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends "base.html" %}
+{% block title %} Appointment {% endblock %}
+
+{% block content %}
+<section class="section-content padding-y" >
+<div class="container">
+<div class="row">
+    <aside class="col-md-3">
+        <ul class="list-group">
+            <a class="list-group-item " href="{{ url_for('profile_page') }}"> Account overview  </a>
+            <a class="list-group-item " href="{{ url_for('past_orders') }}"> My Orders </a>
+            <a class="list-group-item" href="{{ url_for('wish_list') }}"> My wishlist </a>
+            <a class="list-group-item active" href="{{ url_for('appointment') }}">Bookings </a>
+            <a class="list-group-item" href="{{ url_for('Inventory_Management') }}"> My Selling Items </a>
+            <a class="list-group-item" href="{{ url_for('ticket_history') }}"> Ticket History </a>
+        </ul>
+    </aside> <!-- col.// -->
+    <br>
+    <main class="col-md-9">
+        <!--  Current Appointments Section  -->
+        <div class="container-fluid">
+            <div class="bg-gradient-info text-white shadow-lg " style="padding: 35px;">
+              <h2 class="h3 mb-2 " style="color:white;">Current Appointments</h2>
+            </div>
+        </div>
+
+        <div class="container-fluid">
+            {% for i in bookings %}
+                <div class="card mx-auto shadow" style="margin-top: 5px;" >
+                <div class="card-body">
+                <h4 class="card-title mb-4">Appointment on {{ bookings[i].get_date() }} at {{ bookings[i].get_timeslot() }}</h4>
+                <p class = 'mr-auto my-2 my-md-0 mw-100' style="width: 400px; word-wrap: break-word;">Reason: {{ bookings[i].get_description() }}</p>
+                <p class=""><b>Appointment made on: {{ bookings[i].get_time_added() }}</b></p>
+                <p>
+
+                </p>
+                <form action="{{ url_for('delete_appointment',id=bookings[i].get_id()) }}" class="d-inline-block" method="POST">
+                    <input id="uuid" name="uuid" type="hidden" value="{{bookings[i].get_id()}}">
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>&nbsp;
+
+                </div> <!-- card-body.// -->
+              </div>
+            {% endfor %}
+        </div>
+
+    </main>
+    </section>
+
+
+
+
+
+{% endblock %}

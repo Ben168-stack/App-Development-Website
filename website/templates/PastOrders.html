@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% block title %}Past Orders{% endblock %}
+
+{% block content %}
+<section class="section-content padding-y">
+<div class="container">
+<div class="row">
+    <aside class="col-md-3">
+        <ul class="list-group">
+            <a class="list-group-item " href="{{ url_for('profile_page') }}"> Account overview  </a>
+            <a class="list-group-item active" href="{{ url_for('past_orders') }}"> My Orders </a>
+            <a class="list-group-item" href="{{ url_for('wish_list') }}"> My wishlist </a>
+            <a class="list-group-item" href="{{ url_for('appointment') }}">Bookings</a>
+            <a class="list-group-item" href="{{ url_for('Inventory_Management') }}"> My Selling Items </a>
+            <a class="list-group-item" href="{{ url_for('ticket_history') }}"> Ticket History </a>
+        </ul>
+    </aside> <!-- col.// -->
+    <main class="col-md-9">
+            <!-- ========================= TABLE ========================= -->
+<div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Past Orders</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Image</th>
+                            <th>Barcode</th>
+                            <th>Item</th>
+							<th>Total Cost</th>
+                            <th>Data Purchased</th>
+                            <th>Amount Purchased</th>
+							<th>More Info</th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <th>Image</th>
+                            <th>Barcode</th>
+                            <th>Item</th>
+							<th>Total Cost</th>
+                            <th>Data Purchased</th>
+                            <th>Amount Purchased</th>
+                            <th>More Info</th>
+
+
+
+                        </tr>
+                    </tfoot>
+
+                    <tbody>
+                        {% for i in items %}
+                        <tr>
+                            <td><img class="card-img-top" style="max-height:300px" src="{{url_for('get_img' , id = items[i].get_image())}}" alt="Item Image" /></td>
+                            <td>{{items[i].get_id()}}</td>
+							<td>{{items[i].get_name()}}</td>
+							<td>${{ "{:.2f}".format(items[i].get_total_cost()) }}</td>
+                            <td>{{items[i].get_date_purchase()}}</td>
+                            <td>{{items[i].get_qty_purchased()}}</td>
+                            <td>
+                                <button class="btn btn-outline btn-info" data-toggle="modal" data-target="#Modal-MoreInfo--{{items[i].get_id()}}">More Info</button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+
+                </table>
+
+            </div>
+        </div>
+    </div>
+    </section>
+
+<!-- More Info Modal -->
+{% for i in items %}
+<div class="modal fade" id="Modal-MoreInfo--{{items[i].get_id()}}" style="margin-top:100px;" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">{{items[i].get_name()}}</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <img class="card-img-top" style="max-height:300px" src="{{url_for('get_img' , id = items[i].get_image())}}" alt="Item Image" />
+                    <hr>
+                    <p>Barcode: {{items[i].get_id()}}</p>
+                    <p>Name: {{items[i].get_name()}}</p>
+                    <p>Description: {{items[i].get_description()}}</p>
+                    <p>Price: ${{items[i].get_price()}}</p>
+                    <hr>
+                    <p>Total Cost: ${{ "{:.2f}".format(items[i].get_total_cost()) }}</p>
+                    <p>Purchased Item on: {{items[i].get_date_purchase()}}</p>
+                    <p>Amount Purchased: {{items[i].get_qty_purchased()}}</p>
+                  </div>
+                   <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+{% endfor %}
+
+</body>
+{% endblock %}
+</html>

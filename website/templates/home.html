@@ -1,20 +1,91 @@
 {% extends "base.html" %}
-{% block title %}Library Loan System - Home{% endblock %}
+{% block title %}Home Page{% endblock %}
 
 {% block content %}
-<h1 class="display-4">Home</h1>
-<p>Welcome User!</p>
-    <div class="position-relative overflow-hidden p-3 p-md-5 m-md-3 text-center bg-dark" style="color:white">
-        <div class="col-md-5 p-lg-5 mx-auto my-5">
-            <h1 class="display-4 font-weight-normal">The Notable Chain Market</h1>
-            <i class="fas fa-link fa-4x fa-color"></i>
-            <br>
-            <br>
-            <p class="lead font-weight-normal">Start Banking by clicking the link below</p>
-            <a class="btn btn-primary" href="{{ url_for('login_page') }}">Get Started</a>
-        </div>
-        <div class="product-device box-shadow d-none d-md-block"></div>
-        <div class="product-device product-device-2 box-shadow d-none d-md-block"></div>
+
+<div class="blockcontent">
+
+<!-- Header Block -->
+<div class="container-fluid">
+
+<div class="HeaderContent">
+  <h2>Welcome to Swiss financial services!</h2>
+  <h5>Good Afternoon! <span style="font-weight:bolder">{{user.username}}!</span></h5>
+</div>
+
+<!-- Transfer Funds/ Deposit Page -->
+<div id="TransferModalContainer">
+  <a href="{{ url_for('money_management') }}" class="TransferModalContainer__Button">
+    <h1 class="ContainerWord" id="TransferContainerWord">Transfer/ Deposit Funds</h1>
+    <div class="InnerButtonContainer">
+      <div class="TransferModalContainer__inner">
+        <img class="img1" src="../static/img/transaction_icon.png" alt="Icon Goes here!">
+      </div>
     </div>
+  </a>
+</div>
+<br>
+
+<!-- E-Shopping Page -->
+<div id="ShoppingModalContainer">
+  <a href="{{ url_for('market_page') }}" class="TransferModalContainer__Button">
+    <h1 class="ContainerWord" id="ShoppingContainerWord">E-Commerce Page</h1>
+    <div class="InnerButtonContainer">
+      <div class="TransferModalContainer__inner">
+        <img class="img2" src="../static/img/shopping_cart.png" alt="Icon Goes here!">
+      </div>
+    </div>
+  </a>
+</div>
+<br>
+
+<!-- Dashboard Page -->
+<div id="DashboardModalContainer">
+  <a href="{{ url_for('dashboard_page') }}" class="TransferModalContainer__Button">
+    <h1 class="ContainerWord" id="DashboardContainerWord">Dashboard</h1>
+    <div class="InnerButtonContainer">
+      <div class="TransferModalContainer__inner">
+        <img class="img4" src="../static/img/Dashboard_Icon.png" alt="Icon Goes here!">
+      </div>
+    </div>
+  </a>
+</div>
+<br>
+
+<!-- Profile Settings Page -->
+<div id="ProfileModalContainer">
+  <a href="{{ url_for('profile_page') }}" class="TransferModalContainer__Button">
+    <h1 class="ContainerWord" id="ProfileContainerWord">Your Profile</h1>
+    <div class="InnerButtonContainer">
+      <div class="TransferModalContainer__inner">
+        <img class="img3" src="../static/img/profile_icon.png" alt="Icon Goes here!">
+      </div>
+    </div>
+  </a>
+</div>
+<br>
+
+
+<!--Banking Solutions Section-->
+
+          <div class="col-md-6 col-lg-4 mb-4 mb-lg-4" data-aos="fade-up" data-aos-delay="200">
+            <div class="unit-4">
+              <div class="unit-4-icon">
+                <img src="../static/BankingImages/flaticon-svg/svg/005-megaphone.svg" alt="Free Website Template by Free-Template.co" class="img-fluid w-50 mb-4">
+              </div>
+              <div>
+                <h3>Report An Issue</h3>
+                <p>Have an Issue with our website? You can send a ticket to one of our staff accounts and we will get back to you within 2 to 3 working days. You can only send us a feedback form on how we can improve.</p>
+                <p><a href="{{ url_for('ticket_page') }}">Send a Ticket</a>&nbsp;&nbsp;&nbsp;<a href="{{ url_for('Feedback_Page') }}">Give Feedback</a></p>
+                <p></p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
 {% endblock %}
 

@@ -1,10 +1,108 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends "base.html" %}
+{% block title %}Notes{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+ <div class="row mt-8">
+        {% for i in user_notes %}
+        <div class="d-inline-block w-100">
+            <div class="col-12 shadow p-3 mb-5 bg-info rounded d-inline-block w-100", style="color:black; background-color: azure!important; border-top: 10px solid #2A27A2;">
+
+                <form action="{{ url_for('deleteNotes') }}" class="" method="POST">
+                    <input type="hidden" name="uuid" value="{{ user_notes[i].get_id()}}">
+                    <button type="submit" class="close" data-dismiss="modal" aria-label="Close" style="color:grey">
+                <span aria-hidden="true">&times;</span>
+                </button>
+                </form>
+                <h3>{{ user_notes[i].get_title() }}</h3>
+
+                <p style="width: 400px; word-wrap: break-word;">{{ user_notes[i].get_description() }}</p>
+                <br>
+                <p class=""><b>Created On: {{ user_notes[i].get_time_added() }}</b></p>
+                <p class=""><p><b>Last Updated On: {{ user_notes[i].get_time_updated() }}</b></p>
+                <form action="{{ url_for('deleteNotes') }}" class="d-inline-block" method="POST">
+                    <input type="hidden" name="uuid" value="{{ user_notes[i].get_id() }}">
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+                &nbsp;
+                <button class="btn btn-warning" data-toggle="modal" data-target="#UpdateNoteModal--{{ user_notes[i].get_id() }}">Update</button>
+            </div>
+        </div>
+        {% endfor %}
+        <hr id="noteDivider" style="border: 0;
+        clear:both;
+        display:block;
+        width: 96%;               
+        background-color:#3a3a3a;
+        height: 1px;
+        opacity: 0.7;">
+        <button type="button" class="btn btn-light shadow btn-lg btn-block" data-toggle="modal" data-target="#exampleModal" style="margin-left: 10px; height: 222px;padding-right: 150px;padding-left: 150px;">
+        <img src="../static/img/sticky-note.png" height="50%">
+        </button>
+
+
+    </div>
+</div>
+<br>
+<br>
+<br>
+ <!-- Button trigger modal -->
+
+
+  <!-- Create Note Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Add Notes</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form method="POST">
+        <div class="modal-body">
+                {{ form.title.label() }}
+                {{ form.title(class='form-control form-control-user', placeholder='Enter Title') }}
+                {{ form.description.label() }}
+                {{ form.description(class='form-control form-control-user', placeholder='Enter Description') }}
+            </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          {{ form.submit(class='btn btn-primary btn-user ') }}
+        </div>
+    </form>
+      </div>
+    </div>
+  </div>
+
+
+    <!-- Update Note Modal   -->
+  {% for i in user_notes %}
+  <div class="modal fade" id="UpdateNoteModal--{{ user_notes[i].get_id() }}" tabindex="-1" role="dialog" aria-labelledby="UpdateNoteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="UpdateNoteModalLabel">Update Notes</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form action="{{url_for('updateNotes')}}" class="d-inline-block" method="POST">
+        <div class="modal-body">
+                <input type="hidden" name="uuid" value="{{ user_notes[i].get_id() }}">
+                {{ form.title.label() }}
+                {{ form.title(class='form-control form-control-user', placeholder='Enter Title') }}
+                {{ form.description.label() }}
+                {{ form.description(class='form-control form-control-user', placeholder='Enter Description') }}
+            </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Update Note</button>
+        </div>
+    </form>
+      </div>
+    </div>
+  </div>
+{% endfor %}
+
+{% endblock %}

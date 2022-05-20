@@ -1,10 +1,29 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends "base.html" %}
+{% block title %}Create Partner{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+<h1 class="display-4">Create Partner</h1>
+<form method="POST">
+    {{ form.hidden_tag() }}
+  <div class="form-group">
+    {{ form.name.label() }}
+    {{ form.name(class='form-control form-control-user', placeholder='Partner Company Name') }}
+  </div>
+  <div class="form-group">
+    {{ form.location.label() }}
+    {{ form.location(class='form-control form-control-user', placeholder='Partner Location') }}
+  </div>
+  <div class="form-group">
+    {{ form.email.label() }}
+    {{ form.email(class='form-control form-control-user', placeholder='Partner Email') }}
+  </div>
+  <br>
+  <br>
+  <br>
+  <br>
+  {{ form.submit(class='btn btn-primary btn-user btn-block') }}
+</form>
+</div>
+{% endblock %}
+

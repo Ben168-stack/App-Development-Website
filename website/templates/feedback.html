@@ -1,10 +1,69 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends "base.html" %}
+{% block title %} Manage Feedbacks{% endblock %}
+
+
+{% block content %}
+<style>
+ .checked {
+  color: #4e73df;
+}
+
+.unchecked {
+    color: darkgray;
+}
+</style>
+<div class="card mx-auto row bg-gradient-info text-white shadow-lg" style=" max-width: 1100px; margin-bottom:20px;">
+    <h2 style="text-align: center; padding: 20px;">Feedbacks</h2>
+    <h4 style="text-align: center; padding: 20px;">Ratings and reviews</h4>
+    <h1 style="text-align: center;">{{star_average}}</h1>
+    <p style="text-align: center;">{% for i in range(star_average) %}
+        <span class="fa fa-star checked"></span>
+        {% endfor %}
+        {% for x in range(5 - star_average) %}
+        <span class="fa fa-star unchecked"></span>
+        {% endfor %}<br><br></p>
+        <p style="text-align: center; ">{{feedback_dict|length}} reviews</p>
+
+</div>
+<div class="container">
+
+{% for i in feedback_dict %}
+<div class="card shadow mb-4">
+    <!-- Card Header - Dropdown -->
+
+    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+        <h6 class="m-0 font-weight-bold text-primary">
+            {{ feedback_dict[i].get_title().capitalize() }}</h6>
+        <div class="dropdown no-arrow">
+            <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
+                <div class="dropdown-header">Action: </div>
+                <form method="POST" action="{{ url_for('delete_feedback') }}">
+                <input type="hidden" name="uuid" value="{{feedback_dict[i].get_id()}}">
+                <input class="dropdown-item" type="submit" value="Delete">
+            </form>
+            </div>
+        </div>
+    </div>
+    <!-- Card Body -->
+    <div class="card-body">
+    <b>Rating:</b> {% for i in range(feedback_dict[i].get_rating()) %}
+        <span class="fa fa-star checked"></span>
+        {% endfor %}
+        {% for x in range(5 - feedback_dict[i].get_rating()) %}
+        <span class="fa fa-star unchecked"></span>
+        {% endfor %}<br><br>
+    <b>Sender:</b> {{feedback_dict[i].get_sender()}}<br><br>
+    <b>Comments:</b> {{ feedback_dict[i].get_description() }}<br><br>
+    <b>Favourite Thing:</b> {{ feedback_dict[i].get_favourite() }}<br><br>
+    <b>Least Favourite Thing:</b> {{feedback_dict[i].get_least_favourite()}}<br><br>
+    <b>Improvement:</b> {{feedback_dict[i].get_improvement()}}<br>
+
+    </div>
+</div>
+{% endfor %}
+</div>
+
+{% endblock %}

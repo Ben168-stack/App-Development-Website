@@ -11,16 +11,14 @@
 
 
 {% block content %}
-<body class="bg-gradient-primary">
+<div class="container-fluid">
+<body>
     <h1>Deposit</h1>
-    <p>Welcome {{ current_user.username }}!</p>
-    <p>Would you like to make a deposit today?</p>
+    <p>Welcome {{ current_user.username }}! Would you like to make a deposit today?</p>
+   
     <div class="container">
-
-
-
         <div class="card o-hidden border-0 shadow-lg my-5">
-            <div class="card-body p-0">
+            <div class="card-body p-0" >
                 <!-- Nested Row within Card Body -->
                 <div class="row">
                     <div class="col-lg-5 d-none d-lg-block bg-register-image"></div>
@@ -35,7 +33,7 @@
                                 from Cross Site Request Forgery (CSRF) Attack -->
                                 <!--this attack basically may attack or steal
                                 your database -->
-                                <div class="form-group row">
+                                <div class="form-group row" >
                                     <!--userName-->
                                     {{ form.budget.label() }}
                                     {{ form.budget(class='form-control form-control-user', placeholder='Deposit Funds Here') }}
@@ -48,14 +46,18 @@
                                 <br>
                                 <br>
                                 </div>
-                                {{ form.submit(class='btn btn-primary btn-user btn-block') }}
+                            <div style="padding:20px">{{ form.submit(class='btn btn-primary btn-user btn-block') }}</div>
+
                             </form>
+
                             <hr>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
+
 
 
     <!-- Bootstrap core JavaScript-->
